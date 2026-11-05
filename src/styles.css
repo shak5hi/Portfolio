@@ -423,12 +423,22 @@ html.no-intro .intro, html.no-intro .intro__skip, html.no-intro .intro__splash {
   overflow: hidden;
 }
 .shore__head { padding-top: var(--section); }
+@media (min-width: 761px) {
+  .shore__pin {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: 48px;
+  }
+  .shore__head { padding-top: 0; }
+}
 .shore__head h2 { font-size: var(--step-3); }
 .shore__head p { margin-top: 24px; max-width: 44ch; font-size: var(--step-1); line-height: 1.4; }
 .shore__pin { position: relative; }
 .shore__track {
   position: relative;
-  padding: clamp(56px, 8vw, 120px) var(--gutter) var(--section);
+  padding: clamp(32px, 4vw, 56px) var(--gutter) 0;
   width: max-content;
 }
 .shore__stops {
@@ -441,7 +451,7 @@ html.no-intro .intro, html.no-intro .intro__skip, html.no-intro .intro__splash {
 .shore__path {
   position: absolute;
   left: 0;
-  top: clamp(56px, 8vw, 120px);
+  top: calc(clamp(32px, 4vw, 56px) + 10px);
   height: 80px;
   pointer-events: none;
 }
@@ -467,7 +477,7 @@ html.no-intro .intro, html.no-intro .intro__skip, html.no-intro .intro__splash {
 }
 
 @media (max-width: 760px) {
-  .shore__track { width: auto; }
+  .shore__track { width: auto; padding-bottom: var(--section); }
   .shore__stops { flex-direction: column; gap: 56px; }
   .shore__path { display: none; }
   .stop { width: auto; padding-top: 0; padding-left: 72px; }
