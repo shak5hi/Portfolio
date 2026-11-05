@@ -1,0 +1,20 @@
+{
+  "name": "shakshi-portfolio",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "author": "",
+  "description": "Personal portfolio of Shakshi Sharma",
+  "devDependencies": {
+    "vite": "^6.4.5"
+  },
+  "dependencies": {
+    "gsap": "^3.13.0",
+    "lenis": "^1.3.0"
+  },
+  "private": true,
+  "type": "module"
+}
