@@ -491,9 +491,9 @@ html.no-intro .intro, html.no-intro .intro__skip, html.no-intro .intro__splash {
   grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
   gap: clamp(32px, 6vw, 112px);
 }
-.faq h2 { font-size: var(--step-3); position: sticky; top: 110px; }
-.faq__aside { position: relative; }
-.faq__aside .doodle { margin-top: 48px; width: min(100%, 320px); position: sticky; top: 260px; }
+.faq h2 { font-size: var(--step-3); }
+.faq__aside { position: sticky; top: 110px; align-self: start; }
+.faq__aside .doodle { margin-top: 48px; width: min(100%, 300px); }
 .qa { border-radius: 20px; background: var(--paper-2); transition: background-color 0.3s; }
 .qa + .qa { margin-top: 12px; }
 .qa[open] { background: var(--sea); }
@@ -515,7 +515,7 @@ html.no-intro .intro, html.no-intro .intro__skip, html.no-intro .intro__splash {
 .qa__a { padding: 0 28px 28px; max-width: 62ch; }
 @media (max-width: 900px) {
   .faq__grid { grid-template-columns: 1fr; }
-  .faq h2 { position: static; }
+  .faq__aside { position: static; }
   .faq__aside .doodle { display: none; }
 }
 
@@ -600,6 +600,19 @@ html.no-intro .intro, html.no-intro .intro__skip, html.no-intro .intro__splash {
 .bottle .note-line { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
 .bottle .cork { fill: var(--sun); }
 .bottle .water { fill: none; stroke: var(--sea); stroke-width: 3; stroke-linecap: round; }
+.clock {
+  margin-top: 56px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: var(--step-1);
+  line-height: 1.35;
+  max-width: 34ch;
+}
+.clock svg { width: 72px; height: 72px; flex: none; }
+.clock .ink { stroke: var(--paper); }
+.clock__face { fill: var(--sun); }
+.clock time { font-weight: 600; }
 .bottle-form__sent { margin-top: 18px; min-height: 1.5em; font-weight: 500; }
 @media (max-width: 900px) { .contact__grid { grid-template-columns: 1fr; } }
 
@@ -622,7 +635,7 @@ html.no-intro .intro, html.no-intro .intro__skip, html.no-intro .intro__splash {
 .footer__row a:hover { text-decoration: underline; }
 .footer__name {
   margin-top: clamp(24px, 4vw, 48px);
-  font: 500 clamp(4rem, 21.5vw, 22rem) / 0.78 var(--display);
+  font: 500 clamp(5rem, 33vw, 40rem) / 0.78 var(--display);
   font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144;
   letter-spacing: -0.05em;
   white-space: nowrap;
@@ -640,3 +653,6 @@ html.no-motion [data-reveal] > * { opacity: 1 !important; transform: none !impor
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
+
+/* without the pinned walk, the shoreline scrolls sideways by hand */
+html.no-motion .shore__pin { overflow-x: auto; }

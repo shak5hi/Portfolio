@@ -48,3 +48,38 @@ note.addEventListener('input', () => {
 });
 
 
+
+// A live clock in Shakshi's time zone, with a guess at what she's up to.
+const TIME_ZONE = 'Asia/Kolkata'; // change if you move
+const doing = [
+  [0, 'asleep and dreaming of the sea'],
+  [6, 'making the first chai'],
+  [9, 'deep in some code'],
+  [13, 'out for lunch'],
+  [14, 'shipping things'],
+  [18, 'out for an evening walk'],
+  [20, 'sketching in my notebook'],
+  [23, 'pretending to sleep'],
+];
+function tick() {
+  const now = new Date();
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-GB', { timeZone: TIME_ZONE, hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
+      .formatToParts(now)
+      .map((p) => [p.type, p.value])
+  );
+  const h = Number(parts.hour);
+  const m = Number(parts.minute);
+  document.getElementById('clock-time').textContent = new Intl.DateTimeFormat('en-US', {
+    timeZone: TIME_ZONE,
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+    .format(now)
+    .toLowerCase();
+  document.getElementById('clock-doing').textContent = doing.filter(([from]) => h >= from).pop()[1];
+  document.getElementById('clock-h').setAttribute('transform', `rotate(${(h % 12) * 30 + m / 2} 36 36)`);
+  document.getElementById('clock-m').setAttribute('transform', `rotate(${m * 6} 36 36)`);
+}
+tick();
+setInterval(tick, 30000);
