@@ -1,6 +1,7 @@
 import './style.css';
 import { gsap } from 'gsap';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { initCursor } from './cursor.js';
 
 gsap.registerPlugin(DrawSVGPlugin);
 
@@ -13,6 +14,8 @@ const root = document.documentElement;
 const reduce = root.classList.contains('no-motion');
 const skipIntro = reduce || root.classList.contains('no-intro');
 const $ = (s) => document.querySelector(s);
+
+initCursor({ reduce });
 const NS = 'http://www.w3.org/2000/svg';
 
 /* ---------- menu ---------- */

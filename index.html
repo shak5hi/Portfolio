@@ -41,7 +41,7 @@
       <section class="hero" id="hero" aria-labelledby="hero-title">
         <h1 class="visually-hidden" id="hero-title">Hello, meet Shakshi</h1>
         <div class="hero__stage">
-          <div class="hero__photo" id="photo">
+          <div class="hero__photo" id="photo" data-cursor="hi, that's me!">
             <svg class="ink ink--back" id="ink-back" viewBox="0 0 1360 1080" aria-hidden="true"></svg>
             <div class="hero__img"><img src="/me.webp" alt="Shakshi, smiling, in a white shirt with her long dark hair down" /></div>
             <svg class="ink ink--front" id="ink-front" viewBox="0 0 1360 1080" aria-hidden="true"></svg>
@@ -49,7 +49,7 @@
 
           <p class="big big--hello" aria-hidden="true">HELLO</p>
           <div class="visitor" id="visitor">
-            <form class="mono mono--name" id="name-line" autocomplete="off">
+            <form class="mono mono--name" id="name-line" autocomplete="off" data-cursor="type your name">
               <span class="brace" aria-hidden="true" data-text="{{&nbsp;"></span><input
                 class="name-slot"
                 id="name-input"
@@ -64,7 +64,7 @@
                 aria-label="Type your first name, then press enter"
               /><span class="brace" aria-hidden="true" data-text="&nbsp;}}"></span><span class="caret" aria-hidden="true"></span>
             </form>
-            <button class="visitor__name" id="name-show" type="button" hidden aria-label="Change your name"></button>
+            <button class="visitor__name" id="name-show" type="button" hidden aria-label="Change your name" data-cursor="not you? change it"></button>
           </div>
           <p class="big big--meet" aria-hidden="true">MEET</p>
           <p class="mono mono--tag">
