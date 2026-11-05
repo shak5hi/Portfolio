@@ -30,15 +30,6 @@
     </div>
 
     <div class="page" id="page">
-    <!-- ribbon -->
-    <div class="ribbon" id="ribbon">
-      <div class="ribbon__track" id="ribbon-track" aria-hidden="true"></div>
-      <p class="visually-hidden">New website, who dis?</p>
-      <button class="ribbon__close" id="ribbon-close" type="button" aria-label="Close the banner">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" /></svg>
-      </button>
-    </div>
-
     <header class="nav">
       <a class="nav__logo" href="/" aria-label="Shakshi, home" id="logo"></a>
       <button class="nav__menu" id="menu-open" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
@@ -57,7 +48,14 @@
           </div>
 
           <p class="big big--hello" aria-hidden="true">HELLO</p>
-          <p class="mono mono--name" aria-hidden="true"><span class="type" data-text="{{ first name }}"></span><span class="caret"></span></p>
+          <div class="visitor" id="visitor">
+            <button class="mono mono--name" id="name-btn" type="button" aria-label="Type your first name"><span class="type" data-text="{{ first name }}"></span><span class="caret"></span></button>
+            <form class="visitor__form" id="name-form" hidden>
+              <label class="visually-hidden" for="name-input">Your first name</label>
+              <input class="mono mono--input" id="name-input" name="name" type="text" autocomplete="given-name" maxlength="14" placeholder="first name" spellcheck="false" />
+            </form>
+            <button class="visitor__name" id="name-show" type="button" hidden aria-label="Change your name"></button>
+          </div>
           <p class="big big--meet" aria-hidden="true">MEET</p>
           <p class="mono mono--tag">
             <span class="type" data-text="A DEVELOPER/DESIGNER/DOODLER WITH BIG PLANS."></span><span class="caret"></span>

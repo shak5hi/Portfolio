@@ -1,15 +1,12 @@
 import './style.css';
 import { gsap } from 'gsap';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
-import { SplitText } from 'gsap/SplitText';
 
-gsap.registerPlugin(DrawSVGPlugin, SplitText);
+gsap.registerPlugin(DrawSVGPlugin);
 
 /* ===================== edit me ===================== */
 // The words that flash in the preloader, in order.
 const WORDS = ['HIRE', 'ME', 'BEFORE', 'THEY', 'DO'];
-// The scrolling line in the top ribbon.
-const RIBBON = 'NEW WEBSITE, WHO DIS?? <3<3<3';
 /* =================================================== */
 
 const root = document.documentElement;
@@ -17,17 +14,6 @@ const reduce = root.classList.contains('no-motion');
 const skipIntro = reduce || root.classList.contains('no-intro');
 const $ = (s) => document.querySelector(s);
 const NS = 'http://www.w3.org/2000/svg';
-
-/* ---------- ribbon ---------- */
-const heart = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10.5 1.4 6A2.7 2.7 0 0 1 6 2.6 2.7 2.7 0 0 1 10.6 6Z"/></svg>';
-const chunk = `<span>${RIBBON.replace(/</g, '&lt;')}${heart}</span>`;
-$('#ribbon-track').innerHTML = chunk.repeat(10);
-const ribbonLoop = gsap.to('#ribbon-track', { xPercent: -50, duration: 40, ease: 'none', repeat: -1, paused: reduce });
-$('#ribbon-close').addEventListener('click', () => {
-  const r = $('#ribbon');
-  if (reduce) return r.remove();
-  gsap.to(r, { height: 0, duration: 0.5, ease: 'power3.inOut', onComplete: () => { ribbonLoop.kill(); r.remove(); } });
-});
 
 /* ---------- menu ---------- */
 const menu = $('#menu');
@@ -158,14 +144,10 @@ function typeOut(el, speed) {
 }
 
 /* ---------- the hero comes in ---------- */
-const bigSplits = [];
+// HELLO / MEET / SHAKSHI stay still; the photo, ink, logo and typed lines move.
 function prepareHero() {
-  document.querySelectorAll('.big').forEach((el) => {
-    const split = new SplitText(el, { type: 'chars', charsClass: 'char', mask: 'chars' });
-    bigSplits.push(split);
-    gsap.set(split.chars, { yPercent: 110 });
-  });
-  gsap.set('.big, .hero__photo, .ribbon, .nav', { visibility: 'visible' });
+  gsap.set('.big, .hero__photo, .nav, .visitor', { visibility: 'visible' });
+  fitName();
 }
 
 function heroIn(logo) {
@@ -187,24 +169,93 @@ function heroIn(logo) {
     .from('.hair-flower', { scale: 0, rotate: -90, duration: 0.7, ease: 'back.out(2.4)', stagger: 0.12 }, 0.9)
     .from('.hero__img', { scale: 1.06, duration: 1.6 }, 0);
 
-  const [hello, meet, name] = bigSplits;
-  tl.to(hello.chars, { yPercent: 0, duration: 1, stagger: 0.045 }, 0.55)
-    .to(meet.chars, { yPercent: 0, duration: 1, stagger: 0.045 }, 0.75)
-    .to(name.chars, { yPercent: 0, duration: 1, stagger: 0.045 }, 0.95)
-    .add(typeOut($('.mono--name .type'), 0.06), 1.1)
-    .add(typeOut($('.mono--tag .type'), 0.028), '>-0.1');
-
-  // letters hop when the pointer passes over them
-  bigSplits.forEach((s) =>
-    s.chars.forEach((c) =>
-      c.addEventListener('pointerenter', () => {
-        if (gsap.isTweening(c)) return;
-        gsap.fromTo(c, { yPercent: 0 }, { yPercent: -12, duration: 0.22, ease: 'power2.out', yoyo: true, repeat: 1 });
-      })
-    )
-  );
+  if (!savedName) tl.add(typeOut($('.mono--name .type'), 0.06), 0.6);
+  tl.add(typeOut($('.mono--tag .type'), 0.028), savedName ? 0.6 : '>-0.1');
   return tl;
 }
+
+/* ---------- {{ first name }}: visitors type their name ---------- */
+const nameBtn = $('#name-btn');
+const nameForm = $('#name-form');
+const nameInput = $('#name-input');
+const nameShow = $('#name-show');
+const STORE = 'visitor-first-name';
+
+let savedName = '';
+try {
+  savedName = localStorage.getItem(STORE) || '';
+} catch {}
+
+// size the name in the big type so it fills its spot without running off
+function fitName() {
+  if (nameShow.hidden) return;
+  nameShow.style.fontSize = '';
+  const max = nameShow.parentElement.getBoundingClientRect().width;
+  const w = nameShow.scrollWidth;
+  if (w > max) {
+    const size = parseFloat(getComputedStyle(nameShow).fontSize);
+    nameShow.style.fontSize = `${(size * max) / w}px`;
+  }
+}
+
+function showName(name, animate) {
+  nameBtn.hidden = true;
+  nameForm.hidden = true;
+  nameShow.hidden = false;
+  nameShow.textContent = name.toUpperCase();
+  nameShow.setAttribute('aria-label', `Hello ${name}. Change your name`);
+  fitName();
+  if (animate && !reduce) {
+    gsap.fromTo(nameShow, { yPercent: 40, opacity: 0, rotate: -3 }, { yPercent: 0, opacity: 1, rotate: 0, duration: 0.7, ease: 'back.out(1.8)' });
+  }
+}
+
+function editName() {
+  nameBtn.hidden = true;
+  nameShow.hidden = true;
+  nameForm.hidden = false;
+  nameInput.value = savedName;
+  nameInput.focus();
+}
+
+function resetName() {
+  nameForm.hidden = true;
+  nameShow.hidden = true;
+  nameBtn.hidden = false;
+  const t = nameBtn.querySelector('.type');
+  t.textContent = t.dataset.text;
+}
+
+nameBtn.addEventListener('click', editName);
+nameShow.addEventListener('click', editName);
+
+nameForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  commitName();
+});
+nameInput.addEventListener('blur', () => {
+  if (!nameForm.hidden) commitName();
+});
+nameInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    e.stopPropagation();
+    savedName ? showName(savedName) : resetName();
+  }
+});
+
+function commitName() {
+  // first word only, letters (any language), hyphens and apostrophes
+  const name = (nameInput.value.trim().split(/\s+/)[0] || '').replace(/[^\p{L}\p{M}'-]/gu, '').slice(0, 14);
+  try {
+    name ? localStorage.setItem(STORE, name) : localStorage.removeItem(STORE);
+  } catch {}
+  savedName = name;
+  if (name) showName(name, true);
+  else resetName();
+}
+
+if (savedName) showName(savedName);
+window.addEventListener('resize', fitName);
 
 /* ---------- preloader ---------- */
 function fitWord(el, word) {
@@ -306,13 +357,15 @@ const fontsReady = document.fonts.ready;
 if (skipIntro) {
   Promise.all([fontsReady, logoReady]).then(([, logo]) => {
     if (reduce) {
-      gsap.set('.big, .hero__photo, .ribbon, .nav', { visibility: 'visible' });
+      gsap.set('.big, .hero__photo, .nav, .visitor', { visibility: 'visible' });
       document.querySelectorAll('.type').forEach((el) => (el.textContent = el.dataset.text));
       return;
     }
     prepareHero();
     heroIn(logo);
   });
+  // fonts may arrive after the name is shown
+  fontsReady.then(fitName);
 } else {
   document.body.classList.add('is-loading');
   document.body.style.background = '#000';
