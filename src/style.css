@@ -1,5 +1,5 @@
 :root {
-  --paper: #f3f3e9;
+  --paper: #ebe5d5;
   --blue: #2152e3;
   --blue-deep: #1638a8;
   --ink: #141414;
@@ -11,7 +11,7 @@
 
   --gutter: clamp(16px, 2.8vw, 40px);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --nav-h: 84px;
+  --nav-h: 76px;
 }
 
 *,
@@ -121,18 +121,18 @@ html.no-intro .loader, html.no-motion .loader { display: none; }
   place-items: center;
   overflow: clip;
 }
-/* the composition is 100u wide and 54u tall; u is whatever fits the screen */
+/* the composition is laid out around the centre line in u, a unit that
+   makes the whole thing (about 104u x 52u) as big as the screen allows */
 .hero__stage {
-  --u: min(calc((100vw - 2 * var(--gutter)) / 100), calc((100svh - var(--nav-h) - 40px) / 60));
+  --u: min(calc((100vw - 2 * var(--gutter)) / 108), calc((100svh - var(--nav-h) - 20px) / 52));
   position: relative;
-  width: calc(var(--u) * 100);
-  height: calc(var(--u) * 54);
-  margin-bottom: calc(var(--u) * 4);
+  width: 100%;
+  height: calc(var(--u) * 52);
 }
 
 .big {
   position: absolute;
-  font: 400 calc(var(--u) * 11.6)/0.84 var(--big);
+  font: 400 calc(var(--u) * 13)/0.84 var(--big);
   color: var(--blue);
   letter-spacing: 0;
   white-space: nowrap;
@@ -140,30 +140,30 @@ html.no-intro .loader, html.no-motion .loader { display: none; }
   user-select: none;
 }
 .big .char { display: inline-block; will-change: transform; }
-.big--hello { left: 5%; top: 14%; }
-.big--meet { left: 8%; top: 59%; }
-.big--name { right: 2%; top: 74%; }
+.big--hello { left: calc(50% - var(--u) * 50); top: calc(var(--u) * 2); }
+.big--meet { left: calc(50% - var(--u) * 46); top: calc(var(--u) * 29); }
+.big--name { right: calc(50% - var(--u) * 52); top: calc(var(--u) * 38.5); }
 
 .mono {
   position: absolute;
-  font: 400 calc(var(--u) * 3.4)/1 var(--mono);
+  font: 400 calc(var(--u) * 3.6)/1 var(--mono);
   color: var(--blue);
   white-space: nowrap;
   z-index: 3;
 }
 .mono--tag {
-  font-size: max(11px, calc(var(--u) * 1.08));
+  font-size: max(11px, calc(var(--u) * 1.15));
   color: var(--ink);
   letter-spacing: 0.01em;
-  right: 3%;
-  top: 69.5%;
+  right: calc(50% - var(--u) * 51);
+  top: calc(var(--u) * 36);
 }
 /* {{ first name }}: a button that becomes an input, then the name in big type */
 .visitor {
   position: absolute;
-  left: 59%;
-  right: 0;
-  top: 29%;
+  left: calc(50% + var(--u) * 17);
+  right: calc(50% - var(--u) * 54);
+  top: calc(var(--u) * 15.5);
   z-index: 4;
 }
 .visitor .mono { position: static; }
@@ -205,7 +205,7 @@ html.no-intro .loader, html.no-motion .loader { display: none; }
   margin-top: calc(var(--u) * -2.2);
   background: none;
   cursor: pointer;
-  font: 400 calc(var(--u) * 11.6)/0.84 var(--big);
+  font: 400 calc(var(--u) * 13)/0.84 var(--big);
   color: var(--blue);
   white-space: nowrap;
   text-align: left;
@@ -227,10 +227,9 @@ html.no-intro .loader, html.no-motion .loader { display: none; }
 /* the photo, cropped to the person; ink lines sit behind and in front */
 .hero__photo {
   position: absolute;
-  left: 45.5%;
-  bottom: 6%;
-  width: 39%;
-  transform: translateX(-50%);
+  left: calc(50% - var(--u) * 26);
+  bottom: calc(var(--u) * 4.5);
+  width: calc(var(--u) * 46);
   z-index: 2;
 }
 .hero__img {

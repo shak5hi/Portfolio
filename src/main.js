@@ -70,7 +70,7 @@ function flower(cx, cy, s, rot) {
   for (let i = 0; i < 5; i++) {
     petals += `<ellipse cx="0" cy="-15" rx="9" ry="15" transform="rotate(${i * 72})"/>`;
   }
-  return `<g class="flower" transform="translate(${cx} ${cy}) rotate(${rot}) scale(${s})">${petals}<circle r="7" fill="#f3f3e9"/></g>`;
+  return `<g class="flower" transform="translate(${cx} ${cy}) rotate(${rot}) scale(${s})">${petals}<circle r="7" style="fill: var(--paper)"/></g>`;
 }
 
 const brushFilter = (id) => `<defs>
@@ -87,13 +87,13 @@ const brushFilter = (id) => `<defs>
 const backLines = [
   { x: 215, y0: 360, y1: 1050, amp: 20, seed: 1, w: 10, hook: -24 },
   { x: 140, y0: 500, y1: 960, amp: 24, seed: 2, w: 8 },
-  { x: 1215, y0: 270, y1: 610, amp: 26, seed: 3, w: 11, hook: 24 },
-  { x: 1290, y0: 380, y1: 590, amp: 18, seed: 4, w: 8 },
+  { x: 1215, y0: 420, y1: 690, amp: 26, seed: 3, w: 11, hook: 24 },
+  { x: 1290, y0: 470, y1: 650, amp: 18, seed: 4, w: 8 },
 ];
 const frontLines = [
   { x: 290, y0: 600, y1: 1070, amp: 14, seed: 5, w: 9, hook: 20 },
-  { x: 1150, y0: 420, y1: 620, amp: 20, seed: 6, w: 10 },
-  { x: 1185, y0: 230, y1: 470, amp: 16, seed: 7, w: 8, hook: -18 },
+  { x: 1150, y0: 480, y1: 700, amp: 20, seed: 6, w: 10 },
+  { x: 1185, y0: 400, y1: 600, amp: 16, seed: 7, w: 8, hook: -18 },
 ];
 
 function drawInk(svg, lines, id, extra = '') {
