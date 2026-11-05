@@ -1,6 +1,7 @@
 import './styles.css';
 import { beachScene } from './scene.js';
 import { doodles } from './doodles.js';
+import { playIntro } from './intro.js';
 
 // Drawings
 const heroCard = document.querySelector('[data-scene="hero"]');
@@ -23,4 +24,5 @@ note.addEventListener('input', () => {
   count.textContent = `${note.value.length} / 600 characters`;
 });
 
-export {};
+playIntro();
+
