@@ -13,8 +13,6 @@ npm run build     # production build in dist/
 npm run preview   # serve the build
 ```
 
-Dev-only helpers: `?nointro` skips the intro, `?slow=0.25` plays every animation at quarter speed.
-
 ## Edit
 
 - Preloader words and the ribbon text: top of `src/main.js`.
