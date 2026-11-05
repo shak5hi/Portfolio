@@ -169,22 +169,62 @@ function heroIn(logo) {
     .from('.hair-flower', { scale: 0, rotate: -90, duration: 0.7, ease: 'back.out(2.4)', stagger: 0.12 }, 0.9)
     .from('.hero__img', { scale: 1.06, duration: 1.6 }, 0);
 
-  if (!savedName) tl.add(typeOut($('.mono--name .type'), 0.06), 0.6);
+  if (!savedName) tl.add(typeLine(0.06), 0.6);
   tl.add(typeOut($('.mono--tag .type'), 0.028), savedName ? 0.6 : '>-0.1');
   return tl;
 }
 
-/* ---------- {{ first name }}: visitors type their name ---------- */
-const nameBtn = $('#name-btn');
-const nameForm = $('#name-form');
+/* ---------- {{ first name }}: visitors type right between the brackets ---------- */
+const nameLine = $('#name-line');
 const nameInput = $('#name-input');
 const nameShow = $('#name-show');
+const braces = nameLine.querySelectorAll('.brace');
+const PLACEHOLDER = nameInput.dataset.placeholder;
 const STORE = 'visitor-first-name';
 
 let savedName = '';
 try {
   savedName = localStorage.getItem(STORE) || '';
 } catch {}
+
+// the slot is exactly as wide as what is in it (the font is monospaced)
+function sizeSlot() {
+  const focused = document.activeElement === nameInput;
+  const shown = nameInput.value || (focused ? '' : nameInput.placeholder);
+  nameInput.style.width = `${Math.max(shown.length, focused ? 1 : 0)}ch`;
+}
+
+function setLineText(open, hint, close) {
+  braces[0].textContent = open;
+  nameInput.placeholder = hint;
+  braces[1].textContent = close;
+  sizeSlot();
+}
+function fillLine() {
+  setLineText(braces[0].dataset.text, PLACEHOLDER, braces[1].dataset.text);
+}
+
+// typed out during the intro: "{{ ", then "first name", then " }}"
+function typeLine(speed) {
+  const parts = [braces[0].dataset.text, PLACEHOLDER, braces[1].dataset.text];
+  const total = parts.join('').length;
+  const state = { n: 0 };
+  setLineText('', '', '');
+  return gsap.to(state, {
+    n: total,
+    duration: total * speed,
+    ease: 'none',
+    onUpdate() {
+      let left = Math.round(state.n);
+      const cut = parts.map((p) => {
+        const s = p.slice(0, Math.max(0, left));
+        left -= p.length;
+        return s;
+      });
+      setLineText(...cut);
+    },
+  });
+}
 
 // size the name in the big type so it fills its spot without running off
 function fitName() {
@@ -199,8 +239,7 @@ function fitName() {
 }
 
 function showName(name, animate) {
-  nameBtn.hidden = true;
-  nameForm.hidden = true;
+  nameLine.hidden = true;
   nameShow.hidden = false;
   nameShow.textContent = name.toUpperCase();
   nameShow.setAttribute('aria-label', `Hello ${name}. Change your name`);
@@ -210,50 +249,61 @@ function showName(name, animate) {
   }
 }
 
-function editName() {
-  nameBtn.hidden = true;
-  nameShow.hidden = true;
-  nameForm.hidden = false;
-  nameInput.value = savedName;
-  nameInput.focus();
+function commitName() {
+  // first word only: letters in any language, hyphens and apostrophes
+  const name = (nameInput.value.trim().split(/\s+/)[0] || '').replace(/[^\p{L}\p{M}'-]/gu, '').slice(0, 14);
+  try {
+    if (name) localStorage.setItem(STORE, name);
+    else localStorage.removeItem(STORE);
+  } catch {}
+  savedName = name;
+  if (name) showName(name, true);
+  else {
+    nameInput.value = '';
+    sizeSlot();
+  }
 }
 
-function resetName() {
-  nameForm.hidden = true;
-  nameShow.hidden = true;
-  nameBtn.hidden = false;
-  const t = nameBtn.querySelector('.type');
-  t.textContent = t.dataset.text;
-}
-
-nameBtn.addEventListener('click', editName);
-nameShow.addEventListener('click', editName);
-
-nameForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  commitName();
+// tapping anywhere on the line puts the cursor between the brackets
+nameLine.addEventListener('mousedown', (e) => {
+  if (e.target !== nameInput) e.preventDefault(); // keep focus from jumping off
 });
+nameLine.addEventListener('click', (e) => {
+  if (e.target !== nameInput) nameInput.focus();
+});
+nameInput.addEventListener('focus', () => {
+  nameLine.classList.add('is-typing');
+  sizeSlot();
+});
+nameInput.addEventListener('input', sizeSlot);
 nameInput.addEventListener('blur', () => {
-  if (!nameForm.hidden) commitName();
+  nameLine.classList.remove('is-typing');
+  if (nameInput.value.trim()) commitName();
+  else sizeSlot();
 });
 nameInput.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     e.stopPropagation();
-    savedName ? showName(savedName) : resetName();
+    nameInput.value = '';
+    nameInput.blur();
   }
 });
+nameLine.addEventListener('submit', (e) => {
+  e.preventDefault();
+  nameInput.blur();
+});
 
-function commitName() {
-  // first word only, letters (any language), hyphens and apostrophes
-  const name = (nameInput.value.trim().split(/\s+/)[0] || '').replace(/[^\p{L}\p{M}'-]/gu, '').slice(0, 14);
-  try {
-    name ? localStorage.setItem(STORE, name) : localStorage.removeItem(STORE);
-  } catch {}
-  savedName = name;
-  if (name) showName(name, true);
-  else resetName();
-}
+// clicking the big name brings the brackets back to change it
+nameShow.addEventListener('click', () => {
+  nameShow.hidden = true;
+  nameLine.hidden = false;
+  fillLine();
+  nameInput.value = savedName;
+  nameInput.focus();
+  nameInput.select();
+});
 
+fillLine();
 if (savedName) showName(savedName);
 window.addEventListener('resize', fitName);
 

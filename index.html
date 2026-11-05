@@ -49,10 +49,20 @@
 
           <p class="big big--hello" aria-hidden="true">HELLO</p>
           <div class="visitor" id="visitor">
-            <button class="mono mono--name" id="name-btn" type="button" aria-label="Type your first name"><span class="type" data-text="{{ first name }}"></span><span class="caret"></span></button>
-            <form class="visitor__form" id="name-form" hidden>
-              <label class="visually-hidden" for="name-input">Your first name</label>
-              <input class="mono mono--input" id="name-input" name="name" type="text" autocomplete="given-name" maxlength="14" placeholder="first name" spellcheck="false" />
+            <form class="mono mono--name" id="name-line" autocomplete="off">
+              <span class="brace" aria-hidden="true" data-text="{{&nbsp;"></span><input
+                class="name-slot"
+                id="name-input"
+                name="name"
+                type="text"
+                autocomplete="given-name"
+                enterkeyhint="done"
+                maxlength="14"
+                placeholder=""
+                data-placeholder="first name"
+                spellcheck="false"
+                aria-label="Type your first name, then press enter"
+              /><span class="brace" aria-hidden="true" data-text="&nbsp;}}"></span><span class="caret" aria-hidden="true"></span>
             </form>
             <button class="visitor__name" id="name-show" type="button" hidden aria-label="Change your name"></button>
           </div>
