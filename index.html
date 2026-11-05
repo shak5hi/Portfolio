@@ -3,350 +3,82 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Shakshi Sharma — software engineer with a soft spot for design</title>
-    <meta
-      name="description"
-      content="Hi, I'm Shakshi. I build web things that feel hand-made: software engineer with a soft spot for design. Work, story, FAQs and a message in a bottle."
-    />
-    <meta name="theme-color" content="#f5f0da" />
+    <title>Shakshi Sharma</title>
+    <meta name="description" content="Hello, meet Shakshi." />
+    <meta name="theme-color" content="#f3f3e9" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..600,0..100,0..1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Geist:wght@400..600&family=Geist+Mono:wght@400..500&display=swap"
       rel="stylesheet"
     />
     <script>
-      // Decide before first paint whether the intro plays, so nothing flashes.
       (function () {
         var d = document.documentElement;
         d.classList.add('js');
-        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        var skip = /[?&]nointro\b/.test(location.search);
-        if (reduce) d.classList.add('no-motion');
-        if (reduce || skip) d.classList.add('no-intro');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('no-motion');
+        if (/[?&]nointro\b/.test(location.search)) d.classList.add('no-intro');
       })();
     </script>
   </head>
   <body>
-    <a class="visually-hidden" href="#main">Skip to content</a>
+    <!-- preloader: big words and photo flashes, then it collapses to a line -->
+    <div class="loader" id="loader" aria-hidden="true">
+      <div class="loader__img" id="loader-img"><img src="/me.png" alt="" /></div>
+      <p class="loader__word" id="loader-word"></p>
+    </div>
 
-    <!-- intro: the beach is drawn, then the wave takes the screen -->
-    <div class="intro" id="intro" aria-hidden="true"></div>
-    <canvas class="intro__splash" id="splash" aria-hidden="true"></canvas>
-    <button class="intro__skip" id="skip" type="button">skip the waves</button>
+    <div class="page" id="page">
+    <!-- ribbon -->
+    <div class="ribbon" id="ribbon">
+      <div class="ribbon__track" id="ribbon-track" aria-hidden="true"></div>
+      <p class="visually-hidden">New website, who dis?</p>
+      <button class="ribbon__close" id="ribbon-close" type="button" aria-label="Close the banner">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" /></svg>
+      </button>
+    </div>
 
-    <header class="nav" id="nav">
-      <div class="wrap nav__inner">
-        <a class="nav__mark" href="#top" aria-label="Shakshi Sharma, back to top">
-          <svg class="doodle" viewBox="0 0 40 40" aria-hidden="true">
-            <circle cx="20" cy="18" r="9" fill="#cf9550" />
-            <path class="ink" d="M3 30 q4.25 -5 8.5 0 t8.5 0 t8.5 0 t8.5 0" />
-          </svg>
-          shakshi
-        </a>
-        <nav aria-label="Main">
-          <ul class="nav__links">
-            <li><a href="#work">work</a></li>
-            <li><a href="#about">about</a></li>
-            <li><a href="#shore">story</a></li>
-            <li><a href="#faq">faq</a></li>
-            <li><a class="btn" href="#contact">say hi</a></li>
-          </ul>
-        </nav>
-      </div>
+    <header class="nav">
+      <a class="nav__logo" href="/" aria-label="Shakshi, home" id="logo"></a>
+      <button class="nav__menu" id="menu-open" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span>
+      </button>
     </header>
 
-    <main id="main">
-      <!-- hero -->
-      <section class="hero" id="top">
-        <div class="wrap hero__grid">
-          <div class="hero__text">
-            <h1 id="hero-title">
-              <span class="line">hi, i'm</span>
-              <span class="line">shakshi.</span>
-            </h1>
-            <p class="hero__lede">
-              i'm a software engineer with a soft spot for design. i build web things that feel
-              hand-made, and work like they were engineered.
-            </p>
-            <div class="hero__actions">
-              <a class="btn" href="#work">
-                see what washed ashore
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </a>
-              <span class="hero__now"><span class="dot" aria-hidden="true"></span>open to new projects</span>
-            </div>
+    <main>
+      <section class="hero" id="hero" aria-labelledby="hero-title">
+        <h1 class="visually-hidden" id="hero-title">Hello, meet Shakshi</h1>
+        <div class="hero__stage">
+          <div class="hero__photo" id="photo">
+            <svg class="ink ink--back" id="ink-back" viewBox="0 0 1360 1080" aria-hidden="true"></svg>
+            <div class="hero__img"><img src="/me.png" alt="Shakshi, smiling, in a white shirt with her long dark hair down" /></div>
+            <svg class="ink ink--front" id="ink-front" viewBox="0 0 1360 1080" aria-hidden="true"></svg>
           </div>
-          <figure class="hero__card" data-scene="hero" style="margin: 0">
-            <figcaption class="hero__caption">drawn by hand, line by line</figcaption>
-          </figure>
-        </div>
-      </section>
 
-      <!-- marquee -->
-      <div class="marquee" aria-label="salt water fixes most things. so does clean code. ship it, then go to the beach.">
-        <div class="marquee__track" aria-hidden="true" id="marquee"></div>
-      </div>
-
-      <!-- about -->
-      <section class="about" id="about" aria-labelledby="about-title">
-        <div class="wrap about__grid">
-          <div data-reveal>
-            <h2 id="about-title">the person behind the tide</h2>
-            <figure class="polaroid">
-              <!-- Swap this drawing for a real photo: <img src="/me.jpg" alt="Shakshi at the beach" /> -->
-              <svg class="doodle" viewBox="0 0 400 500" role="img" aria-label="A drawn portrait placeholder: a girl in a sun hat by the sea">
-                <rect width="400" height="500" fill="#a9cbe3" />
-                <circle cx="300" cy="110" r="46" fill="#cf9550" />
-                <path class="ink" d="M0 230 q25 -10 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0" />
-                <path d="M60 500 C70 380 130 330 200 330 C270 330 330 380 340 500 Z" fill="#1d4b88" />
-                <path class="ink paper-fill" d="M120 500 C130 420 160 390 200 390 C240 390 270 420 280 500" />
-                <ellipse cx="200" cy="268" rx="62" ry="72" fill="#efdfae" />
-                <path class="ink" d="M200 196 C160 196 138 232 140 270" />
-                <path class="ink" d="M200 196 C240 196 262 232 260 270" />
-                <path class="stripe ink" d="M96 214 C130 176 270 176 304 214 C280 226 120 226 96 214 Z" />
-                <path class="ink sun-fill" d="M150 210 C160 160 240 160 250 210 Z" />
-                <path class="ink" d="M178 268 q6 -6 12 0 M210 268 q6 -6 12 0 M186 300 q14 12 28 0" />
-                <path class="ink thin" d="M60 120 q10 -12 20 0 q10 -12 20 0 M110 70 q8 -9 16 0 q8 -9 16 0" />
-              </svg>
-              <figcaption>me, probably thinking about a bug</figcaption>
-            </figure>
-          </div>
-          <div class="about__body" data-reveal>
-            <p>i grew up believing the best things are made slowly, by hand, and then shipped fast.</p>
-            <div class="copy">
-              <p>
-                most days i'm writing frontends and the services behind them: turning messy problems
-                into interfaces people actually enjoy using. i care about the small stuff, like the
-                easing on a button, the copy in an empty state, the one query that makes a page slow.
-              </p>
-              <p>
-                outside the editor you'll find me sketching in a notebook, collecting shells i will never
-                do anything with, and arguing that chai is a personality.
-              </p>
-            </div>
-            <div class="bag">
-              <div>
-                <h3>i build with</h3>
-                <ul><li>javascript &amp; typescript</li><li>react, next.js</li><li>node &amp; express</li><li>python</li><li>sql &amp; postgres</li></ul>
-              </div>
-              <div>
-                <h3>i design with</h3>
-                <ul><li>figma</li><li>a pencil, mostly</li><li>gsap &amp; css motion</li><li>svg by hand</li><li>type that behaves</li></ul>
-              </div>
-              <div>
-                <h3>i'm good at</h3>
-                <ul><li>shipping the first version</li><li>making it feel nice</li><li>explaining it simply</li><li>finding the weird bug</li><li>asking "but why?"</li></ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- work -->
-      <section class="work" id="work" aria-labelledby="work-title">
-        <div class="wrap">
-          <div class="work__head" data-reveal>
-            <h2 id="work-title">washed ashore lately</h2>
-            <p>a few things i've built, broken, fixed and become far too attached to.</p>
-          </div>
-          <ol class="projects">
-            <li class="project" data-reveal>
-              <div class="project__text">
-                <h3><a href="#work">tidepool</a></h3>
-                <div class="project__meta"><span>2026</span><span>react native</span><span>firebase</span></div>
-                <p class="project__desc">a habit tracker that fills like a rock pool: every day you show up, the water rises a little. built for people who hate streaks.</p>
-                <span class="project__more">read the story <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              </div>
-              <div class="project__art" data-doodle="tidepool"></div>
-            </li>
-            <li class="project" data-reveal>
-              <div class="project__text">
-                <h3><a href="#work">saltlines</a></h3>
-                <div class="project__meta"><span>2025</span><span>d3.js</span><span>python</span><span>open data</span></div>
-                <p class="project__desc">fifty years of coastal tide records, drawn as one long hand-inked line you can scroll along, with the storms marked where they hit.</p>
-                <span class="project__more">read the story <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              </div>
-              <div class="project__art" data-doodle="saltlines"></div>
-            </li>
-            <li class="project" data-reveal>
-              <div class="project__text">
-                <h3><a href="#work">sandcastle ui</a></h3>
-                <div class="project__meta"><span>2025</span><span>typescript</span><span>design system</span></div>
-                <p class="project__desc">a small component library with a big opinion: every component ships with its motion, its empty state and its error state, or it doesn't ship.</p>
-                <span class="project__more">read the story <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              </div>
-              <div class="project__art" data-doodle="sandcastle"></div>
-            </li>
-            <li class="project" data-reveal>
-              <div class="project__text">
-                <h3><a href="#work">hermit</a></h3>
-                <div class="project__meta"><span>2024</span><span>node</span><span>llm api</span><span>slack</span></div>
-                <p class="project__desc">a shy little bot that lives in long slack threads and, when asked nicely, crawls out with a three-line summary and who owes whom a reply.</p>
-                <span class="project__more">read the story <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              </div>
-              <div class="project__art" data-doodle="hermit"></div>
-            </li>
-          </ol>
-        </div>
-      </section>
-
-      <!-- shoreline: experience as a walk along the beach -->
-      <section class="shore" id="shore" aria-labelledby="shore-title">
-        <div class="shore__pin" id="shore-pin">
-          <div class="wrap shore__head" data-reveal>
-            <h2 id="shore-title">the shoreline so far</h2>
-            <p>a short walk along where i've been. scroll and follow the footprints.</p>
-          </div>
-          <div class="shore__track" id="shore-track">
-            <svg class="shore__path doodle" id="shore-path" aria-hidden="true"></svg>
-            <ol class="shore__stops">
-            <li class="stop">
-              <svg class="stop__flag doodle" viewBox="0 0 54 80" aria-hidden="true"><path class="ink" d="M8 78 L8 4"/><path class="ink sun-fill" d="M8 6 L48 16 L8 28 Z"/></svg>
-              <p class="stop__when">2026 — now</p>
-              <h3>software engineer, your company here</h3>
-              <p>building the product's web app end to end: features, performance, the design system, and the occasional 2am incident.</p>
-            </li>
-            <li class="stop">
-              <svg class="stop__flag doodle" viewBox="0 0 54 80" aria-hidden="true"><path class="ink" d="M8 78 L8 4"/><path class="ink sea-fill" d="M8 6 L48 16 L8 28 Z"/></svg>
-              <p class="stop__when">2025</p>
-              <h3>engineering intern, a startup by the sea</h3>
-              <p>shipped onboarding that cut drop-off, rewrote a dashboard nobody liked, and learned to love code review.</p>
-            </li>
-            <li class="stop">
-              <svg class="stop__flag doodle" viewBox="0 0 54 80" aria-hidden="true"><path class="ink" d="M8 78 L8 4"/><path class="ink sun-fill" d="M8 6 L48 16 L8 28 Z"/></svg>
-              <p class="stop__when">2024</p>
-              <h3>hackathon, first place</h3>
-              <p>thirty-six hours, two teammates, one very tired laptop. we built hermit's first version and somehow won.</p>
-            </li>
-            <li class="stop">
-              <svg class="stop__flag doodle" viewBox="0 0 54 80" aria-hidden="true"><path class="ink" d="M8 78 L8 4"/><path class="ink sea-fill" d="M8 6 L48 16 L8 28 Z"/></svg>
-              <p class="stop__when">2022</p>
-              <h3>b.tech, computer science</h3>
-              <p>where i learned data structures, and that i'd rather spend an hour on the hover state than on the homework.</p>
-            </li>
-            <li class="stop">
-              <svg class="stop__flag doodle" viewBox="0 0 54 80" aria-hidden="true"><path class="ink" d="M8 78 L8 4"/><path class="ink sun-fill" d="M8 6 L48 16 L8 28 Z"/></svg>
-              <p class="stop__when">next</p>
-              <h3>your team, maybe?</h3>
-              <p>i'm looking for people who care about how things feel as much as how they work. <a href="#contact">tell me about yours.</a></p>
-            </li>
-          </ol>
-          </div>
-        </div>
-      </section>
-
-      <!-- faq -->
-      <section class="faq" id="faq" aria-labelledby="faq-title">
-        <div class="wrap faq__grid">
-          <div class="faq__aside">
-            <h2 id="faq-title">before you ask…</h2>
-            <svg class="doodle" viewBox="0 0 320 300" aria-hidden="true">
-              <path class="ink sea-fill" d="M40 200 C40 120 280 120 280 200 C280 250 40 250 40 200 Z" />
-              <path class="ink" d="M90 140 C70 90 90 50 130 60 M230 140 C250 90 230 50 190 60" />
-              <circle class="ink paper-fill" cx="125" cy="58" r="16" /><circle cx="128" cy="60" r="6" fill="#1d4b88" />
-              <circle class="ink paper-fill" cx="195" cy="58" r="16" /><circle cx="192" cy="60" r="6" fill="#1d4b88" />
-              <path class="ink" d="M130 205 q30 18 60 0" />
-              <path class="ink" d="M40 190 C10 170 10 140 30 130 C40 150 50 160 60 165 M280 190 C310 170 310 140 290 130 C280 150 270 160 260 165" />
-              <path class="ink" d="M80 240 l-20 40 M120 248 l-8 40 M200 248 l8 40 M240 240 l20 40" />
-            </svg>
-          </div>
-          <div class="faq__list">
-            <details class="qa" open>
-              <summary>when can you start? <svg class="plus doodle" viewBox="0 0 28 28" aria-hidden="true"><path class="ink" d="M14 4v20M4 14h20"/></svg></summary>
-              <div class="qa__a"><p>sooner than you think. tell me what you're building and i'll tell you honestly when i can be useful, usually within a couple of weeks.</p></div>
-            </details>
-            <details class="qa">
-              <summary>are you a designer or a developer? <svg class="plus doodle" viewBox="0 0 28 28" aria-hidden="true"><path class="ink" d="M14 4v20M4 14h20"/></svg></summary>
-              <div class="qa__a"><p>a developer who refuses to hand off the last 10%. i write the code, but i'll also notice your button is two pixels off and quietly fix it.</p></div>
-            </details>
-            <details class="qa">
-              <summary>what kind of work do you love? <svg class="plus doodle" viewBox="0 0 28 28" aria-hidden="true"><path class="ink" d="M14 4v20M4 14h20"/></svg></summary>
-              <div class="qa__a"><p>products real people touch every day: web apps, interactive pages, design systems, tools that make a team faster. bonus points if it needs a little delight.</p></div>
-            </details>
-            <details class="qa">
-              <summary>what won't you do? <svg class="plus doodle" viewBox="0 0 28 28" aria-hidden="true"><path class="ink" d="M14 4v20M4 14h20"/></svg></summary>
-              <div class="qa__a"><p>dark patterns, fake countdown timers, and anything that makes a "cancel subscription" button harder to find than the beach on a cloudy day.</p></div>
-            </details>
-            <details class="qa">
-              <summary>how do you like to work? <svg class="plus doodle" viewBox="0 0 28 28" aria-hidden="true"><path class="ink" d="M14 4v20M4 14h20"/></svg></summary>
-              <div class="qa__a"><p>small, frequent, visible. i'd rather show you a rough thing on tuesday than a perfect thing never. async-friendly, with a call when it actually helps.</p></div>
-            </details>
-            <details class="qa">
-              <summary>your biggest weakness? <svg class="plus doodle" viewBox="0 0 28 28" aria-hidden="true"><path class="ink" d="M14 4v20M4 14h20"/></svg></summary>
-              <div class="qa__a"><p>i will absolutely spend an evening making a wave crash across a loading screen. you are looking at the evidence.</p></div>
-            </details>
-          </div>
-        </div>
-      </section>
-
-      <!-- contact: message in a bottle -->
-      <section class="contact" id="contact" aria-labelledby="contact-title">
-        <div class="wrap contact__grid">
-          <div data-reveal>
-            <h2 id="contact-title">send a message in a bottle</h2>
-            <p class="contact__lede">write me a note, cork it, and throw it out to sea. it lands in my inbox, and i reply within a couple of days.</p>
-            <ul class="socials">
-              <li><a href="mailto:pysharma0612@gmail.com">email</a></li>
-              <li><a href="https://www.linkedin.com/" rel="noopener" target="_blank">linkedin</a></li>
-              <li><a href="https://github.com/" rel="noopener" target="_blank">github</a></li>
-              <li><a href="https://www.instagram.com/" rel="noopener" target="_blank">instagram</a></li>
-            </ul>
-            <p class="clock" id="clock">
-              <svg class="doodle" viewBox="0 0 72 72" aria-hidden="true">
-                <circle class="clock__face" cx="36" cy="36" r="30" />
-                <path class="ink" id="clock-h" d="M36 36 V20" />
-                <path class="ink thin" id="clock-m" d="M36 36 V12" />
-              </svg>
-              <span>it's <time id="clock-time">—</time> where i am, so i'm <span id="clock-doing">probably at my desk</span>.</span>
-            </p>
-          </div>
-          <form class="bottle-form" id="bottle-form" novalidate>
-            <svg class="bottle" id="bottle" viewBox="0 0 380 170" aria-hidden="true">
-              <path class="water" id="bottle-water" d="M0 150 q23.75 -12 47.5 0 t47.5 0 t47.5 0 t47.5 0 t47.5 0 t47.5 0 t47.5 0 t47.5 0" />
-              <g id="bottle-body">
-                <path class="ink glass" d="M60 70 C60 50 76 40 100 40 L220 40 C240 40 250 52 266 58 L300 62 L300 98 L266 102 C250 108 240 120 220 120 L100 120 C76 120 60 110 60 90 Z" stroke-width="3.2" fill-rule="evenodd" />
-                <g id="bottle-note">
-                  <rect class="note" x="96" y="58" width="130" height="44" rx="4" />
-                  <path class="note-line" d="M108 72 h96 M108 82 h80 M108 92 h60" />
-                </g>
-                <rect class="cork" id="bottle-cork" x="300" y="66" width="28" height="28" rx="6" />
-              </g>
-            </svg>
-            <div class="field">
-              <label for="note">your note</label>
-              <textarea id="note" name="note" maxlength="600" placeholder="hi shakshi, we're building…" required aria-describedby="note-count"></textarea>
-            </div>
-            <div class="field">
-              <label for="from">your name</label>
-              <input id="from" name="from" type="text" autocomplete="name" placeholder="who's it from?" />
-            </div>
-            <div class="bottle-form__row">
-              <span class="bottle-form__count" id="note-count">0 / 600 characters</span>
-              <button class="btn btn--sun" type="submit">cork it &amp; throw</button>
-            </div>
-            <p class="bottle-form__sent" id="bottle-status" role="status" aria-live="polite"></p>
-          </form>
+          <p class="big big--hello" aria-hidden="true">HELLO</p>
+          <p class="mono mono--name" aria-hidden="true"><span class="type" data-text="{{ first name }}"></span><span class="caret"></span></p>
+          <p class="big big--meet" aria-hidden="true">MEET</p>
+          <p class="mono mono--tag">
+            <span class="type" data-text="A DEVELOPER/DESIGNER/DOODLER WITH BIG PLANS."></span><span class="caret"></span>
+          </p>
+          <p class="big big--name" aria-hidden="true">SHAKSHI</p>
         </div>
       </section>
     </main>
+    </div>
 
-    <footer class="footer">
-      <div class="wrap footer__row">
-        <p>© 2026 shakshi sharma · made by hand, and a lot of sunscreen</p>
-        <ul>
-          <li><a href="#work">work</a></li>
-          <li><a href="#about">about</a></li>
-          <li><a href="#faq">faq</a></li>
-          <li><a href="#top" id="to-top">back to the shore ↑</a></li>
-        </ul>
-      </div>
-      <p class="footer__name" aria-hidden="true" id="footer-name">shakshi</p>
-      <svg class="footer__wave" viewBox="0 0 1600 60" preserveAspectRatio="none" aria-hidden="true">
-        <path id="footer-wave" d="M0 30 Q100 0 200 30 T400 30 T600 30 T800 30 T1000 30 T1200 30 T1400 30 T1600 30 V60 H0 Z" />
-      </svg>
-    </footer>
+    <!-- menu -->
+    <div class="menu" id="menu" hidden>
+      <button class="menu__close" id="menu-close" type="button" aria-label="Close menu">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" /></svg>
+      </button>
+      <ul class="menu__list">
+        <li><span>WORK</span> <small>coming soon</small></li>
+        <li><span>ABOUT</span> <small>coming soon</small></li>
+        <li><span>SAY HI</span> <small>coming soon</small></li>
+      </ul>
+    </div>
 
     <script type="module" src="/src/main.js"></script>
   </body>
