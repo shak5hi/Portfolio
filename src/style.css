@@ -814,10 +814,9 @@ html.has-cursor * { cursor: none !important; }
   .footer__big { font-size: 19vw; }
 }
 
-/* ---------- folders: the page is the front folder, the rest peek out behind ---------- */
+/* ---------- folder tabs: plain and classic, down the right edge ---------- */
 :root {
-  --rail: 48px;     /* room on the right for the tabs */
-  --desk: #d7cdb4;  /* what's behind the folders */
+  --rail: 26px; /* room on the right for the tabs */
 }
 .page { padding-right: var(--rail); }
 
@@ -828,69 +827,67 @@ html.has-cursor * { cursor: none !important; }
   bottom: 0;
   z-index: 67;
   width: var(--rail);
-  background: var(--desk);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  border-left: 1px solid rgb(20 20 20 / 0.12);
+  background: var(--paper);
   transition: transform 0.6s var(--ease);
 }
 .folders.is-away { transform: translateX(105%); }
-/* the front folder (the page) casts a soft shadow over the ones behind */
-.folders::before {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  z-index: 15;
-  width: 14px;
-  background: linear-gradient(to right, rgb(40 30 10 / 0.16), transparent);
-  pointer-events: none;
-}
-/* each folder's own edge, just showing behind the page */
-.folders__edge {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  background: var(--c);
-  box-shadow: 1px 0 3px rgb(40 30 10 / 0.18);
-}
-
 .folders__tab {
-  position: absolute;
-  left: 0;
-  width: var(--rail);
-  color: rgb(20 20 20 / 0.72);
+  position: relative;
+  flex: 1 1 0;
+  width: calc(var(--rail) - 6px);
+  margin-left: -1px;
+  background: var(--c);
+  border: 1px solid rgb(20 20 20 / 0.1);
+  border-left: 0;
+  border-radius: 0 3px 3px 0;
+  color: rgb(20 20 20 / 0.7);
   text-decoration: none;
-  filter: drop-shadow(1px 1px 2px rgb(40 30 10 / 0.22));
-  transition: translate 0.35s var(--ease), color 0.2s;
+  transition: width 0.3s var(--ease), color 0.2s, background 0.2s;
 }
-.folders__tab svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  overflow: hidden; /* folders behind stay behind the page */
-}
-.folders__tab.is-here svg { overflow: visible; }
-.folders__tab path { fill: var(--c); }
+/* no labels on the tabs: the name slides out beside the tab on hover */
 .folders__tab span {
   position: absolute;
-  left: 0;
-  right: 6px;
+  top: 50%;
+  right: calc(100% + 10px);
+  padding: 7px 11px;
+  border-radius: 3px;
+  background: #141414;
+  color: var(--paper);
+  font: 500 12px / 1 var(--text);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  opacity: 0;
+  translate: 6px -50%;
+  pointer-events: none;
+  transition: opacity 0.2s, translate 0.3s var(--ease);
+}
+.folders__tab:hover span,
+.folders__tab:focus-visible span { opacity: 1; translate: 0 -50%; }
+.folders__tab:hover { width: calc(var(--rail) - 3px); }
+.folders__tab:focus-visible { outline: 2px solid var(--blue); outline-offset: -4px; }
+/* the open tab is the page's own colour and joins straight onto it */
+.folders__tab.is-here {
+  width: calc(var(--rail) - 1px);
+  background: var(--paper);
+  border-color: rgb(20 20 20 / 0.16);
+  color: #141414;
+  box-shadow: 2px 1px 6px -3px rgb(20 20 20 / 0.2);
+}
+.folders__tab.is-here::before {
+  /* covers the edge line where the tab meets the page */
+  content: '';
+  position: absolute;
+  left: -1px;
   top: 0;
   bottom: 0;
-  display: grid;
-  place-items: center;
-  writing-mode: vertical-rl;
-  font: 500 11.5px / 1 var(--text);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
+  width: 2px;
+  background: var(--paper);
 }
-.folders__tab:hover { translate: 3px 0; color: #141414; }
-.folders__tab:focus-visible { outline: 2px solid var(--blue); outline-offset: -4px; }
-
-/* the open folder's tab is part of the front folder: page-coloured, on top,
-   and running straight into the page */
-.folders__tab.is-here { z-index: 20 !important; color: #141414; translate: none; filter: drop-shadow(2px 1px 3px rgb(40 30 10 / 0.2)); }
-.folders__tab.is-here path { fill: var(--paper); }
 
 /* the colour that sweeps across the page when a tab is clicked */
 .folders__sheet {
@@ -926,8 +923,11 @@ html.has-cursor * { cursor: none !important; }
 .plane-toast { right: calc(var(--rail) + 16px); }
 
 @media (max-width: 760px) {
-  :root { --rail: 32px; }
-  .folders__tab span { font-size: 9.5px; right: 4px; }
+  :root { --rail: 20px; }
+  .folders { gap: 3px; }
+  .folders__tab { width: calc(var(--rail) - 5px); }
+  .folders__tab:hover { width: calc(var(--rail) - 3px); }
+  .folders__tab.is-here { width: calc(var(--rail) - 1px); }
   .plane { right: calc(var(--rail) + 4px); }
   .plane-toast { right: calc(var(--rail) + 8px); }
 }
