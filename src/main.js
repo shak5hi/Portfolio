@@ -479,6 +479,8 @@ fetch('/drawings/section-2.svg')
   })
   .catch(() => {});
 
+import('./skills.js').then((m) => m.initSkills({ reduce }));
+
 // the paper plane needs three.js; fetch it after the page is up so the hero isn't kept waiting
 import('./plane.js').then((m) => m.initPlane({ reduce }));
 

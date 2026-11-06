@@ -426,3 +426,85 @@ html.has-cursor * { cursor: none !important; }
   .plane { width: 92px; height: 76px; top: auto; bottom: 16px; right: 8px; }
   .plane-toast { right: 12px; bottom: 96px; font-size: 12px; }
 }
+
+/* ---------- section 3: what I do ---------- */
+.skills { position: relative; }
+.skills__pin {
+  height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  /* one screen tall: the list is allowed to run past it, the copy stays centred */
+  grid-template-rows: minmax(0, 1fr);
+  column-gap: clamp(32px, 4.5vw, 96px);
+  align-items: center;
+  padding: var(--nav-h) var(--gutter) var(--gutter);
+  overflow: hidden;
+  background: var(--paper);
+}
+.skills__copy {
+  justify-self: end;
+  max-width: 44rem;
+  text-align: right;
+}
+.skills__head {
+  margin: 0 0 clamp(16px, 2.2vh, 28px);
+  font: 400 clamp(36px, 3.6vw, 70px) / 0.98 var(--big);
+  text-transform: uppercase;
+  color: var(--blue);
+  text-wrap: balance;
+}
+.skills__body {
+  font: 400 clamp(16px, 1.2vw, 21px) / 1.5 var(--text);
+  color: var(--ink);
+}
+.skills__body p { margin: 0 0 0.7em; }
+.skills__body em { font-style: normal; font-weight: 600; }
+.skills__btn {
+  display: inline-flex;
+  gap: 0.6em;
+  margin-top: clamp(14px, 2vh, 26px);
+  font: 400 clamp(13px, 0.95vw, 16px) / 1.2 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--blue);
+  text-decoration: none;
+}
+/* each letter rolls up to a copy of itself on hover */
+.roll { display: inline-flex; overflow: hidden; }
+.roll__c {
+  display: inline-block;
+  white-space: pre;
+  text-shadow: 0 1.25em currentColor;
+  transition: transform 0.45s var(--ease);
+  transition-delay: calc(var(--i) * 18ms);
+}
+.skills__btn:hover .roll__c,
+.skills__btn:focus-visible .roll__c { transform: translateY(-1.25em); }
+
+.skills__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  justify-self: start;
+  align-self: start;
+  font: 400 clamp(44px, 5.6vw, 108px) / 1 var(--big);
+  height: max-content;
+  text-transform: uppercase;
+  color: var(--ink);
+  will-change: transform;
+}
+.skills__list li { margin: 0 0 0.06em; }
+.skills__w { display: inline-block; }
+
+/* phones: copy on top, list underneath, no pinning */
+@media (max-width: 760px) {
+  .skills__pin {
+    height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    row-gap: 48px;
+    padding: 96px var(--gutter) 120px;
+  }
+  .skills__copy { justify-self: start; text-align: left; }
+  .skills__list { font-size: 11.5vw; }
+}
