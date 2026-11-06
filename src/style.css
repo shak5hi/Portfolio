@@ -814,36 +814,43 @@ html.has-cursor * { cursor: none !important; }
   .footer__big { font-size: 19vw; }
 }
 
-/* ---------- folder tabs down the right edge ---------- */
+/* ---------- index tabs on the page's right edge ---------- */
+:root {
+  --rail: 44px; /* room on the right for the tabs */
+}
+/* the page stops at a thin edge, and the tabs stick out past it */
+.page { padding-right: var(--rail); }
+.page-edge {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: var(--rail);
+  z-index: 66;
+  width: 1.5px;
+  background: rgb(20 20 20 / 0.18);
+  pointer-events: none;
+}
+
 .folders {
-  --tab-w: 34px;
-  --top: calc(var(--nav-h) + 8px);
-  --tab-h: calc((100svh - var(--top) - 24px) / 5 - 6px);
+  --top: 20svh;
+  --tab-h: calc((100svh - var(--top) - 32px) / 5);
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
-  z-index: 70;
-  width: var(--tab-w);
+  z-index: 67;
+  width: var(--rail);
   pointer-events: none;
   transition: transform 0.6s var(--ease);
 }
 .folders.is-away { transform: translateX(110%); }
-/* the stack of page edges the tabs belong to */
-.folders__edges {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: row-reverse;
-}
-.folders__edges i { width: 3px; height: 100%; opacity: 0.9; }
 .folders__tab {
   position: absolute;
-  right: 0;
-  top: calc(var(--top) + var(--slot) * (var(--tab-h) + 6px));
-  width: var(--tab-w);
+  left: 0;
+  /* stacked down the edge, each just overlapping the one above */
+  top: calc(var(--top) + var(--slot) * (var(--tab-h) - 3px));
+  z-index: calc(10 - var(--slot));
+  width: calc(var(--rail) - 8px);
   height: var(--tab-h);
   display: grid;
   place-items: center;
@@ -854,45 +861,36 @@ html.has-cursor * { cursor: none !important; }
   text-transform: uppercase;
   text-decoration: none;
   writing-mode: vertical-rl;
-  /* a folder divider's tab: slanted shoulders top and bottom */
-  clip-path: polygon(0 14px, 100% 0, 100% 100%, 0 calc(100% - 14px));
-  border-radius: 4px 0 0 4px;
+  border: 1.5px solid rgb(20 20 20 / 0.18);
+  border-left: 0;
+  border-radius: 0 7px 7px 0;
   pointer-events: auto;
-  transition: width 0.35s var(--ease);
+  transition: width 0.35s var(--ease), box-shadow 0.35s var(--ease);
 }
 .folders__tab:hover,
-.folders__tab:focus-visible,
-.folders__tab.is-here { width: calc(var(--tab-w) + 10px); }
+.folders__tab:focus-visible { width: calc(var(--rail) - 4px); }
+/* the tab you're on sits on top of the stack */
+.folders__tab.is-here {
+  z-index: 20;
+  width: calc(var(--rail) - 2px);
+  box-shadow: 3px 3px 12px -4px rgb(20 20 40 / 0.35);
+}
 .folders__tab:focus-visible { outline: 2px dashed var(--blue); outline-offset: 2px; }
 
-/* the divider sheet that sweeps across when a tab is clicked */
+/* the colour that sweeps across the page when a tab is clicked */
 .folders__sheet {
-  --tab-h: calc((100svh - var(--nav-h) - 32px) / 5 - 6px);
   position: fixed;
-  inset: 0;
-  z-index: 95;
+  top: 0;
+  left: 0;
+  right: var(--rail);
+  bottom: 0;
+  z-index: 65;
   visibility: hidden;
   background: var(--c);
   color: var(--ink);
   display: grid;
   place-items: center;
-  box-shadow: -18px 0 40px rgb(20 20 40 / 0.18);
-}
-.folders__sheet-tab {
-  position: absolute;
-  left: -34px;
-  top: calc(var(--nav-h) + 8px + var(--slot) * (var(--tab-h) + 6px));
-  width: 35px;
-  height: var(--tab-h);
-  display: grid;
-  place-items: center;
-  background: var(--c);
-  font: 500 10.5px / 1 var(--mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  writing-mode: vertical-rl;
-  clip-path: polygon(0 14px, 100% 0, 100% 100%, 0 calc(100% - 14px));
-  border-radius: 4px 0 0 4px;
+  overflow: hidden;
 }
 .folders__sheet-title {
   font: 400 clamp(64px, 12vw, 220px) / 0.9 var(--big);
@@ -901,11 +899,13 @@ html.has-cursor * { cursor: none !important; }
   padding: 0 var(--gutter);
 }
 
+/* the plane and its note stay on the page, clear of the tabs */
+.plane { right: calc(var(--rail) + clamp(8px, 2.4vw, 48px)); }
+.plane-toast { right: calc(var(--rail) + 16px); }
+
 @media (max-width: 760px) {
-  .folders { --tab-w: 24px; }
-  /* keep the content clear of the tabs */
-  .page { padding-right: 26px; }
-  .folders__tab { font-size: 9px; letter-spacing: 0.1em; clip-path: polygon(0 10px, 100% 0, 100% 100%, 0 calc(100% - 10px)); }
-  .folders__sheet-tab { display: none; }
-  .plane { right: 30px; }
+  :root { --rail: 28px; }
+  .folders__tab { font-size: 8.5px; letter-spacing: 0.1em; border-radius: 0 5px 5px 0; }
+  .plane { right: calc(var(--rail) + 4px); }
+  .plane-toast { right: calc(var(--rail) + 8px); }
 }

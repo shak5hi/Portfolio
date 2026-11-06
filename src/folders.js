@@ -1,7 +1,7 @@
-// Folder tabs. The whole page is the folder's cover, and the section dividers
-// stick out of its right edge. Clicking one pulls that divider across the
-// screen in its colour (the page turns that colour), jumps to the section
-// underneath, then the sheet carries on off the left so the folder opens.
+// Index tabs, like a notebook's, sticking out of the page's right edge.
+// Clicking one brings that tab to the top of the stack, sweeps its colour
+// across the page like turning to it, jumps to the section underneath, and
+// the colour carries on off the left to open onto it.
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -13,21 +13,12 @@ export function initFolders({ reduce = false } = {}) {
   if (!nav) return;
   const tabs = [...nav.querySelectorAll('.folders__tab')];
 
-  // the thin coloured page edges behind the tabs
-  const edges = nav.querySelector('.folders__edges');
-  tabs.forEach((t) => {
-    const e = document.createElement('i');
-    e.style.background = t.style.getPropertyValue('--c');
-    edges.appendChild(e);
-  });
-
-  // the sheet that sweeps across: a full-screen divider with its tab attached
+  // the colour that sweeps across the page
   const sheet = document.createElement('div');
   sheet.className = 'folders__sheet';
   sheet.setAttribute('aria-hidden', 'true');
-  sheet.innerHTML = '<span class="folders__sheet-tab"></span><span class="folders__sheet-title"></span>';
+  sheet.innerHTML = '<span class="folders__sheet-title"></span>';
   document.body.appendChild(sheet);
-  const sheetTab = sheet.querySelector('.folders__sheet-tab');
   const sheetTitle = sheet.querySelector('.folders__sheet-title');
 
   const targetOf = (tab) => document.querySelector(tab.getAttribute('href'));
@@ -42,15 +33,15 @@ export function initFolders({ reduce = false } = {}) {
       return;
     }
     busy = true;
-    ['--c', '--ink', '--slot'].forEach((p) => sheet.style.setProperty(p, tab.style.getPropertyValue(p)));
-    sheetTab.textContent = tab.textContent;
+    ['--c', '--ink'].forEach((p) => sheet.style.setProperty(p, tab.style.getPropertyValue(p)));
+    // the clicked tab comes to the top of the stack straight away
+    tabs.forEach((t) => t.classList.toggle('is-here', t === tab));
     sheetTitle.textContent = tab.textContent;
 
     gsap
       .timeline({ onComplete: () => (busy = false) })
       .set(sheet, { visibility: 'visible', xPercent: 100 })
       .set(sheetTitle, { opacity: 0, y: 30 })
-      .to(tab, { x: -14, duration: 0.18, ease: 'power2.out' })
       // the divider is pulled across and the page turns its colour
       .to(sheet, { xPercent: 0, duration: 0.75, ease: 'power3.inOut' }, 0.08)
       .to(sheetTitle, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, 0.55)
@@ -58,7 +49,6 @@ export function initFolders({ reduce = false } = {}) {
         window.scrollTo({ top: topOf(target), behavior: 'instant' });
         ScrollTrigger.update();
       }, 0.85)
-      .to(tab, { x: 0, duration: 0.3 }, 0.85)
       // then it carries on out of the way: the folder is open
       .to(sheetTitle, { opacity: 0, y: -20, duration: 0.3, ease: 'power2.in' }, 1.05)
       .to(sheet, { xPercent: -100, duration: 0.8, ease: 'power3.inOut' }, 1.1)
@@ -72,7 +62,7 @@ export function initFolders({ reduce = false } = {}) {
     });
   });
 
-  // the tab for the section you're in sits pulled out a little
+  // the tab for the section you're in sits on top of the stack
   tabs.forEach((tab) => {
     const target = targetOf(tab);
     if (!target) return;
