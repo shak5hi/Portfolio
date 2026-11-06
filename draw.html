@@ -68,7 +68,8 @@
       .size[aria-pressed='true'] { background: var(--ink); }
       .size[aria-pressed='true'] span { background: var(--paper); }
       .row { display: flex; flex-wrap: wrap; gap: 6px; }
-      button.t {
+      button.t,
+      label.t {
         min-height: 38px;
         padding: 0.45em 0.9em;
         border: 0;
@@ -93,6 +94,15 @@
       }
       label.f input[type='range'] { width: 100%; }
       #status { min-height: 1.4em; font-weight: 600; }
+      label.t.file { display: inline-flex; align-items: center; }
+      .note { margin: 8px 0 0; font-size: 12.5px; color: #555; }
+      .ref-controls { display: grid; gap: 10px; margin-top: 12px; }
+      .ref-controls[hidden] { display: none; }
+      #ref { pointer-events: none; }
+      #pad.moving { cursor: grab; }
+      #pad.moving:active { cursor: grabbing; }
+      .pad-wrap.drop { outline: 4px dashed var(--blue); outline-offset: -4px; }
+      .visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
       .stage { display: grid; gap: 8px; }
       .pad-wrap {
@@ -144,6 +154,26 @@
           <div class="row" role="group" aria-label="Tool">
             <button class="t" type="button" id="tool-pen" aria-pressed="true">pen</button>
             <button class="t" type="button" id="tool-erase" aria-pressed="false">eraser</button>
+            <button class="t" type="button" id="tool-move" aria-pressed="false" disabled title="Load a reference image first">move image</button>
+          </div>
+        </div>
+
+        <div>
+          <h2>Reference image</h2>
+          <div class="row">
+            <label class="t file" for="ref-file">choose image</label>
+            <input type="file" id="ref-file" accept="image/*" class="visually-hidden" />
+            <button class="t" type="button" id="ref-remove" disabled>remove</button>
+          </div>
+          <p class="note">or drop / paste an image onto the canvas. it's only a guide and is never saved into the drawing.</p>
+          <div class="ref-controls" id="ref-controls" hidden>
+            <label class="f">visibility <input type="range" id="ref-opacity" min="5" max="100" value="35" /></label>
+            <label class="f">size <input type="range" id="ref-scale" min="20" max="300" value="100" /></label>
+            <div class="row">
+              <button class="t" type="button" id="ref-top" aria-pressed="false">on top of drawing</button>
+              <button class="t" type="button" id="ref-hide" aria-pressed="false">hide</button>
+              <button class="t" type="button" id="ref-fit">fit</button>
+            </div>
           </div>
         </div>
 
@@ -177,7 +207,9 @@
         <div class="pad-wrap">
           <svg id="pad" viewBox="0 0 1600 900" aria-label="Drawing area, the shape of one full screen">
             <rect id="bg" x="0" y="0" width="1600" height="900" />
+            <g id="ref-below"><image id="ref" href="" x="0" y="0" width="0" height="0" preserveAspectRatio="none" /></g>
             <g id="ink"></g>
+            <g id="ref-above"></g>
             <g class="guide" id="guide">
               <rect x="40" y="40" width="1520" height="820" rx="6" />
               <text x="56" y="76">screen edge on a wide monitor · the left and right sides crop on phones</text>
@@ -186,7 +218,7 @@
         </div>
         <p class="hint">
           Tips: a trackpad, pen or finger draws smoother than a mouse. <kbd>Ctrl</kbd>+<kbd>Z</kbd> undo ·
-          <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> redo · <kbd>E</kbd> eraser · <kbd>P</kbd> pen · <kbd>[</kbd> <kbd>]</kbd> pen size.
+          <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> redo · <kbd>E</kbd> eraser · <kbd>P</kbd> pen · <kbd>M</kbd> move image · <kbd>[</kbd> <kbd>]</kbd> pen size.
           The eraser removes a whole stroke when you touch it.
         </p>
       </div>

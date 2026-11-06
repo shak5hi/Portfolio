@@ -129,6 +129,7 @@ pad.addEventListener('pointerdown', (e) => {
   e.preventDefault();
   pad.setPointerCapture(e.pointerId);
   if (tool === 'erase') return eraseAt(e);
+  if (tool === 'move') return startMove(e);
   const [x, y] = toSvg(e);
   smooth = [x, y];
   current = { color: colour, size, points: [[r1(x), r1(y), Math.round(performance.now())]] };
@@ -137,6 +138,7 @@ pad.addEventListener('pointerdown', (e) => {
 });
 
 pad.addEventListener('pointermove', (e) => {
+  if (tool === 'move') return moveTo(e);
   if (tool === 'erase') {
     if (e.buttons) eraseAt(e);
     return;
@@ -236,10 +238,13 @@ function setTool(t) {
   tool = t;
   $('#tool-pen').setAttribute('aria-pressed', String(t === 'pen'));
   $('#tool-erase').setAttribute('aria-pressed', String(t === 'erase'));
+  $('#tool-move').setAttribute('aria-pressed', String(t === 'move'));
   pad.classList.toggle('erasing', t === 'erase');
+  pad.classList.toggle('moving', t === 'move');
 }
 $('#tool-pen').addEventListener('click', () => setTool('pen'));
 $('#tool-erase').addEventListener('click', () => setTool('erase'));
+$('#tool-move').addEventListener('click', () => setTool('move'));
 
 $('#undo').addEventListener('click', undo);
 $('#redo').addEventListener('click', redo);
@@ -274,12 +279,177 @@ window.addEventListener('keydown', (e) => {
     redo();
   } else if (e.key === 'e') setTool('erase');
   else if (e.key === 'p') setTool('pen');
+  else if (e.key === 'm' && ref.src) setTool('move');
   else if (e.key === '[' || e.key === ']') {
     const i = SIZES.indexOf(size) + (e.key === ']' ? 1 : -1);
     size = SIZES[Math.max(0, Math.min(SIZES.length - 1, i))];
     renderSizes();
   }
 });
+
+/* ---------- reference image: a see-through guide to trace over ---------- */
+// Never part of the drawing: export builds only from the strokes.
+const REF_STORE = 'section-drawing-reference';
+const refImg = $('#ref');
+const ref = { src: '', w: 0, h: 0, x: 0, y: 0, scale: 1, opacity: 0.35, onTop: false, hidden: false };
+
+function fitSize() {
+  // the largest size that shows the whole image inside the frame
+  const k = Math.min(W / ref.w, H / ref.h);
+  return [ref.w * k, ref.h * k];
+}
+
+function placeRef() {
+  if (!ref.src) {
+    refImg.setAttribute('href', '');
+    $('#ref-controls').hidden = true;
+    $('#ref-remove').disabled = true;
+    $('#tool-move').disabled = true;
+    if (tool === 'move') setTool('pen');
+    return;
+  }
+  const [fw, fh] = fitSize();
+  const w = fw * ref.scale;
+  const h = fh * ref.scale;
+  refImg.setAttribute('href', ref.src);
+  refImg.setAttribute('width', r1(w));
+  refImg.setAttribute('height', r1(h));
+  refImg.setAttribute('x', r1(W / 2 - w / 2 + ref.x));
+  refImg.setAttribute('y', r1(H / 2 - h / 2 + ref.y));
+  refImg.style.opacity = ref.opacity;
+  refImg.style.display = ref.hidden ? 'none' : '';
+  (ref.onTop ? $('#ref-above') : $('#ref-below')).appendChild(refImg);
+  $('#ref-controls').hidden = false;
+  $('#ref-remove').disabled = false;
+  $('#tool-move').disabled = false;
+  $('#ref-opacity').value = Math.round(ref.opacity * 100);
+  $('#ref-scale').value = Math.round(ref.scale * 100);
+  $('#ref-top').setAttribute('aria-pressed', String(ref.onTop));
+  $('#ref-hide').setAttribute('aria-pressed', String(ref.hidden));
+  $('#ref-hide').textContent = ref.hidden ? 'show' : 'hide';
+}
+
+function saveRef() {
+  try {
+    if (ref.src) localStorage.setItem(REF_STORE, JSON.stringify(ref));
+    else localStorage.removeItem(REF_STORE);
+  } catch {
+    // too big to keep between visits; it still works for this session
+  }
+}
+
+// shrink big photos so they stay quick and fit in the browser's storage
+function loadRefFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    const max = 1800;
+    const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.naturalWidth * k);
+    c.height = Math.round(img.naturalHeight * k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    const webp = c.toDataURL('image/webp', 0.82);
+    Object.assign(ref, {
+      src: webp.startsWith('data:image/webp') ? webp : c.toDataURL('image/jpeg', 0.85),
+      w: c.width,
+      h: c.height,
+      x: 0,
+      y: 0,
+      scale: 1,
+      hidden: false,
+    });
+    URL.revokeObjectURL(url);
+    placeRef();
+    saveRef();
+    status.textContent = 'reference image loaded. it won’t be saved into your drawing.';
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    status.textContent = 'that file could not be opened as an image.';
+  };
+  img.src = url;
+}
+
+$('#ref-file').addEventListener('change', (e) => {
+  loadRefFile(e.target.files[0]);
+  e.target.value = '';
+});
+$('#ref-remove').addEventListener('click', () => {
+  ref.src = '';
+  placeRef();
+  saveRef();
+});
+$('#ref-opacity').addEventListener('input', (e) => {
+  ref.opacity = e.target.value / 100;
+  placeRef();
+  saveRef();
+});
+$('#ref-scale').addEventListener('input', (e) => {
+  ref.scale = e.target.value / 100;
+  placeRef();
+  saveRef();
+});
+$('#ref-top').addEventListener('click', () => {
+  ref.onTop = !ref.onTop;
+  placeRef();
+  saveRef();
+});
+$('#ref-hide').addEventListener('click', () => {
+  ref.hidden = !ref.hidden;
+  placeRef();
+  saveRef();
+});
+$('#ref-fit').addEventListener('click', () => {
+  Object.assign(ref, { x: 0, y: 0, scale: 1 });
+  placeRef();
+  saveRef();
+});
+
+// drop or paste an image straight onto the canvas
+const padWrap = $('.pad-wrap');
+padWrap.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  padWrap.classList.add('drop');
+});
+padWrap.addEventListener('dragleave', () => padWrap.classList.remove('drop'));
+padWrap.addEventListener('drop', (e) => {
+  e.preventDefault();
+  padWrap.classList.remove('drop');
+  loadRefFile(e.dataTransfer.files[0]);
+});
+window.addEventListener('paste', (e) => {
+  const item = [...(e.clipboardData?.items || [])].find((i) => i.type.startsWith('image/'));
+  if (item) loadRefFile(item.getAsFile());
+});
+
+// the move tool drags the reference image around
+let drag = null;
+function startMove(e) {
+  const [x, y] = toSvg(e);
+  drag = { x, y, ox: ref.x, oy: ref.y };
+}
+function moveTo(e) {
+  if (!drag) return;
+  const [x, y] = toSvg(e);
+  ref.x = drag.ox + (x - drag.x);
+  ref.y = drag.oy + (y - drag.y);
+  placeRef();
+}
+function endMove() {
+  if (!drag) return;
+  drag = null;
+  saveRef();
+}
+pad.addEventListener('pointerup', endMove);
+pad.addEventListener('pointercancel', endMove);
+
+try {
+  const saved = JSON.parse(localStorage.getItem(REF_STORE) || 'null');
+  if (saved && saved.src) Object.assign(ref, saved);
+} catch {}
+placeRef();
 
 /* ---------- export ---------- */
 function exportSvg() {
