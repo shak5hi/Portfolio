@@ -370,10 +370,10 @@ html.has-cursor * { cursor: none !important; }
 .plane {
   position: fixed;
   right: clamp(12px, 3.2vw, 64px);
-  top: calc(50% - 70px);
+  top: calc(50% - 56px);
   z-index: 60;
-  width: 172px;
-  height: 140px;
+  width: 138px;
+  height: 112px;
   padding: 0;
   border: 0;
   background: none;
@@ -423,6 +423,6 @@ html.has-cursor * { cursor: none !important; }
 .plane-toast[data-show='true'] { opacity: 1; transform: none; }
 
 @media (max-width: 760px) {
-  .plane { width: 112px; height: 92px; top: auto; bottom: 16px; right: 8px; }
-  .plane-toast { right: 12px; bottom: 112px; font-size: 12px; }
+  .plane { width: 92px; height: 76px; top: auto; bottom: 16px; right: 8px; }
+  .plane-toast { right: 12px; bottom: 96px; font-size: 12px; }
 }
