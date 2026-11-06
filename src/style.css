@@ -91,7 +91,7 @@ html.no-intro .loader, html.no-motion .loader { display: none; }
 .nav__logo { display: block; width: clamp(120px, 10vw, 172px); }
 .nav__logo svg { width: 100%; height: auto; overflow: visible; }
 /* the signature is drawn thin; give it a confident marker weight here */
-.nav__logo path { stroke: var(--blue); stroke-width: 40; }
+.nav__logo path { stroke: var(--blue); stroke-width: 31; }
 .nav__menu {
   width: 48px;
   height: 48px;
