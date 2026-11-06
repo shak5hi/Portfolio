@@ -35,7 +35,7 @@
     </header>
 
     <main>
-      <section class="hero" id="hero" aria-labelledby="hero-title">
+      <section class="hero" id="hero" aria-labelledby="hero-title" data-cursor="scroll ↓">
         <h1 class="visually-hidden" id="hero-title">Hello, meet Shakshi</h1>
         <div class="hero__stage">
           <div class="hero__photo" id="photo" data-cursor="hi, that's me!">
@@ -69,6 +69,17 @@
           </p>
           <p class="big big--name" aria-hidden="true">SHAKSHI</p>
         </div>
+      </section>
+
+      <!-- section 2: Shakshi's own drawing, drawn in as it scrolls into view -->
+      <section class="sketch" id="sketch" aria-labelledby="sketch-title">
+        <h2 class="visually-hidden" id="sketch-title">A sketch of the sea</h2>
+        <div
+          class="sketch__art"
+          id="sketch-art"
+          role="img"
+          aria-label="Shakshi's hand-drawn sketch: an old stone wall by the sea, rocks on the shore, waves, a small boat on the horizon and a cloud"
+        ></div>
       </section>
     </main>
     </div>

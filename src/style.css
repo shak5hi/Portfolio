@@ -278,6 +278,20 @@ html.js:not(.no-motion) .big,
 html.js:not(.no-motion) .visitor,
 html.js:not(.no-motion) .nav { visibility: hidden; }
 
+/* ---------- section 2: the sketch ---------- */
+.sketch {
+  position: relative;
+  height: 100svh;
+  min-height: 480px;
+  overflow: hidden;
+}
+.sketch__art, .sketch__art svg {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+}
+
 /* ---------- custom cursor (mouse and trackpad only) ---------- */
 html.has-cursor,
 html.has-cursor * { cursor: none !important; }

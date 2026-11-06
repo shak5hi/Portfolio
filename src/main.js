@@ -1,9 +1,11 @@
 import './style.css';
 import { gsap } from 'gsap';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initCursor } from './cursor.js';
+import { drawIn } from './draw-in.js';
 
-gsap.registerPlugin(DrawSVGPlugin);
+gsap.registerPlugin(DrawSVGPlugin, ScrollTrigger);
 
 /* ===================== edit me ===================== */
 // The words that flash in the preloader, in order.
@@ -381,6 +383,25 @@ function playLoader() {
 
   return { tl, end: t + 0.7 };
 }
+
+/* ---------- section 2: the sketch draws itself in when it comes into view ---------- */
+fetch('/drawings/section-2.svg')
+  .then((r) => (r.ok ? r.text() : ''))
+  .then((svg) => {
+    const art = $('#sketch-art');
+    if (!svg) return;
+    art.innerHTML = svg;
+    const strokes = art.querySelectorAll('path');
+    if (reduce) return;
+    gsap.set(strokes, { drawSVG: '0%' });
+    ScrollTrigger.create({
+      trigger: '#sketch',
+      start: 'top 65%',
+      once: true,
+      onEnter: () => drawIn(strokes, { total: 5 }),
+    });
+  })
+  .catch(() => {});
 
 /* ---------- run ---------- */
 const fontsReady = document.fonts.ready;
