@@ -35,6 +35,18 @@
       <a class="nav__logo" href="/" aria-label="Shakshi, home" id="logo"></a>
     </header>
 
+    <!-- folder tabs: the page is the folder's cover, and these dividers stick
+         out of its right edge. Each one sweeps its colour across and opens onto
+         its section (src/folders.js). Rename a tab by changing its text. -->
+    <nav class="folders" aria-label="Sections">
+      <span class="folders__edges" aria-hidden="true"></span>
+      <a class="folders__tab" href="#sketch" style="--c: #d6cbae; --ink: #141414; --slot: 0">a note</a>
+      <a class="folders__tab" href="#skills" style="--c: #2152e3; --ink: #ebe5d5; --slot: 1">what i do</a>
+      <a class="folders__tab" href="#work" style="--c: #141414; --ink: #ebe5d5; --slot: 2">work</a>
+      <a class="folders__tab" href="#faq" style="--c: #1638a8; --ink: #ebe5d5; --slot: 3">before you ask</a>
+      <a class="folders__tab" href="#hire" style="--c: #9fb4f5; --ink: #141414; --slot: 4">hire me</a>
+    </nav>
+
     <main>
       <section class="hero" id="hero" aria-labelledby="hero-title" data-cursor="scroll ↓">
         <h1 class="visually-hidden" id="hero-title">Hello, meet Shakshi</h1>
@@ -123,7 +135,7 @@
 
       <!-- section 5: before you ask -->
       <section class="faq" id="faq" aria-labelledby="faq-title">
-        <h2 class="faq__head" id="faq-title" aria-label="Before you ask...">Before<br />you<br />ask<span class="faq__dot">.</span><span class="faq__dot">.</span><span class="faq__dot">.</span></h2>
+        <h2 class="faq__head" id="faq-title" aria-label="Before you ask...">Before <br />you <br />ask<span class="faq__dot">.</span><span class="faq__dot">.</span><span class="faq__dot">.</span></h2>
         <ol class="faq__grid" role="list">
           <li class="faq__card">
             <p class="faq__n">01</p>

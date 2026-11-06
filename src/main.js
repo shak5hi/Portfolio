@@ -8,6 +8,7 @@ import { initWork } from './work.js';
 import { initFaq } from './faq.js';
 import { initHire } from './hire.js';
 import { initFooter } from './footer.js';
+import { initFolders } from './folders.js';
 
 gsap.registerPlugin(DrawSVGPlugin, ScrollTrigger);
 
@@ -490,6 +491,7 @@ initWork({ reduce });
 initFaq({ reduce });
 initHire({ reduce });
 initFooter({ reduce });
+initFolders({ reduce });
 
 // the paper plane needs three.js; fetch it after the page is up so the hero isn't kept waiting
 import('./plane.js').then((m) => m.initPlane({ reduce }));
