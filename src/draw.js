@@ -4,6 +4,7 @@
 
 import { gsap } from 'gsap';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { drawIn } from './draw-in.js';
 
 gsap.registerPlugin(DrawSVGPlugin);
 
@@ -258,14 +259,11 @@ $('#guide-toggle').addEventListener('click', (e) => {
   $('#guide').style.display = on ? '' : 'none';
 });
 
+// the replay always fits in about five seconds, the same as on the site
+let replaying = null;
 $('#replay').addEventListener('click', () => {
-  const paths = [...inkLayer.children];
-  const tl = gsap.timeline();
-  paths.forEach((p, i) => {
-    const s = strokes[i];
-    const took = (s.points[s.points.length - 1][2] - s.points[0][2]) / 1000;
-    tl.fromTo(p, { drawSVG: '0%' }, { drawSVG: '100%', duration: gsap.utils.clamp(0.08, 1.2, took * 0.6), ease: 'none' }, i ? '+=0.03' : 0);
-  });
+  replaying?.progress(1).kill();
+  replaying = drawIn(inkLayer.children, { total: 5 });
 });
 
 window.addEventListener('keydown', (e) => {
