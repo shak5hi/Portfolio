@@ -30,6 +30,7 @@
     </div>
 
     <div class="page" id="page">
+    <span id="top"></span>
     <header class="nav">
       <a class="nav__logo" href="/" aria-label="Shakshi, home" id="logo"></a>
     </header>
@@ -165,6 +166,38 @@
         </a>
       </section>
     </main>
+
+    <!-- footer: the paper plane flies off when this arrives (data-plane-stop) -->
+    <footer class="footer" id="footer" data-plane-stop>
+      <div class="footer__top">
+        <div class="footer__hello">
+          <a class="footer__logo" href="#top" aria-label="Shakshi, back to the top"></a>
+          <p class="footer__line">i'm even better in conversation.<br />say hi at <a href="mailto:shaksshisharma@gmail.com" data-cursor="say hi ✉">shaksshisharma@gmail.com</a></p>
+          <ul class="footer__social" role="list">
+            <li><a href="https://github.com/shak5hi" target="_blank" rel="noopener"><span class="roll">github</span></a></li>
+            <li><a href="mailto:shaksshisharma@gmail.com"><span class="roll">mail</span></a></li>
+          </ul>
+        </div>
+
+        <nav class="footer__nav" aria-label="Footer">
+          <a class="footer__top-link" href="#top" data-cursor="whee ↑"><span aria-hidden="true">[</span><span class="roll">back to top</span><span aria-hidden="true">]</span></a>
+          <ol role="list">
+            <li><a href="#sketch"><span class="roll">a note</span></a><span class="footer__n">01</span></li>
+            <li><a href="#skills"><span class="roll">what i do</span></a><span class="footer__n">02</span></li>
+            <li><a href="#work"><span class="roll">work</span></a><span class="footer__n">03</span></li>
+            <li><a href="#faq"><span class="roll">before you ask</span></a><span class="footer__n">04</span></li>
+            <li><a href="#hire"><span class="roll">hire me</span></a><span class="footer__n">05</span></li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="footer__base">
+        <p>handmade with <span class="footer__flower" aria-hidden="true">✿</span> code, <span aria-hidden="true">☕</span> chai &amp; too many open tabs</p>
+        <p>© <span id="year">2026</span> shakshi sharma. all rights reserved.</p>
+      </div>
+
+      <p class="footer__big" aria-hidden="true">stay curious</p>
+    </footer>
     </div>
 
     <script type="module" src="/src/main.js"></script>

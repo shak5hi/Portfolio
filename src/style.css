@@ -724,3 +724,92 @@ html.has-cursor * { cursor: none !important; }
   .hire__word--unfair { left: 0%; top: 41%; width: 68%; rotate: -4deg; }
   .hire__word--advantage { left: 2%; top: 61%; width: 96%; rotate: 5deg; }
 }
+
+/* ---------- footer ---------- */
+.footer {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(56px, 10vh, 112px) var(--gutter) 0;
+  border-top: 1px solid rgb(20 20 20 / 0.08);
+  font: 400 13px / 1.5 var(--mono);
+  color: var(--ink);
+}
+.footer a { color: inherit; text-decoration: none; }
+.footer a:hover .roll__c,
+.footer a:focus-visible .roll__c { transform: translateY(-1.25em); }
+.footer__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 48px;
+}
+.footer__logo { display: block; width: clamp(130px, 11vw, 180px); }
+.footer__logo svg { display: block; width: 100%; height: auto; }
+.footer__logo path { stroke: var(--blue); stroke-width: 23; }
+.footer__line {
+  margin: 18px 0 22px;
+  font: 400 15px / 1.5 var(--text);
+}
+.footer__line a { color: var(--blue); border-bottom: 1px solid currentColor; }
+.footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.footer__nav { display: grid; justify-items: end; gap: 26px; }
+.footer__top-link {
+  display: inline-flex;
+  gap: 0.6em;
+  color: var(--blue) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.footer__nav ol {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: right;
+}
+.footer__nav li { display: flex; justify-content: flex-end; gap: 14px; }
+.footer__n { color: var(--blue); font-size: 10px; }
+.footer__base {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: clamp(48px, 8vh, 88px);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.footer__base p { margin: 0; }
+.footer__flower { color: var(--blue); }
+/* the huge pale sign-off along the bottom edge */
+.footer__big {
+  margin: clamp(8px, 2vh, 24px) 0 -0.1em;
+  font: 400 clamp(80px, 17.5vw, 340px) / 0.82 var(--big);
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--blue);
+  opacity: 0.09;
+  user-select: none;
+}
+
+@media (max-width: 760px) {
+  .footer__top { flex-direction: column; }
+  .footer__nav { justify-items: start; }
+  .footer__nav ol { text-align: left; }
+  .footer__nav li { justify-content: flex-start; }
+  .footer__big { font-size: 19vw; }
+}
