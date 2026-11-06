@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initCursor } from './cursor.js';
 import { initSkills } from './skills.js';
 import { initWork } from './work.js';
+import { initFaq } from './faq.js';
 
 gsap.registerPlugin(DrawSVGPlugin, ScrollTrigger);
 
@@ -484,6 +485,7 @@ fetch('/drawings/section-2.svg')
 // pinned sections, set up in page order so each pin knows where the last one ends
 initSkills({ reduce });
 initWork({ reduce });
+initFaq({ reduce });
 
 // the paper plane needs three.js; fetch it after the page is up so the hero isn't kept waiting
 import('./plane.js').then((m) => m.initPlane({ reduce }));
