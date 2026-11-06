@@ -648,3 +648,79 @@ html.has-cursor * { cursor: none !important; }
   .faq__grid { gap: 32px; }
   .faq__head { font-size: 17vw; }
 }
+
+/* ---------- section 6: hire your unfair advantage ---------- */
+.hire { padding: clamp(24px, 6vh, 64px) 0 clamp(64px, 12vh, 140px); overflow: hidden; }
+.hire__stage {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1890 / 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+.hire__rows, .hire__words { position: absolute; inset: 0; pointer-events: none; }
+
+/* the handwritten sentence, five rows on wide screens */
+.hire__row {
+  position: absolute;
+  left: 4%;
+  width: 92%;
+  height: 13%;
+  max-width: none;
+  overflow: visible;
+  top: calc(9% + var(--r) * 16.6%);
+  rotate: calc((var(--r) - 2) * 0.35deg);
+}
+.hire__row:nth-child(2) { rotate: -0.45deg; }
+.hire__row:nth-child(4) { rotate: 0.5deg; }
+.hire__row:nth-child(n + 6) { display: none; }
+.hire__row text {
+  font: 105px 'Homemade Apple', cursive;
+  fill: var(--ink);
+  stroke: var(--ink);
+  stroke-width: 1.6;
+}
+
+/* the big marker words */
+.hire__word {
+  position: absolute;
+  height: auto;
+  max-width: none;
+  overflow: visible;
+  transition: rotate 0.4s var(--ease), translate 0.4s var(--ease);
+}
+.hire__word text {
+  font: 235px 'Gochi Hand', cursive;
+  fill: var(--blue);
+  stroke: var(--blue);
+  stroke-width: 7;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+.hire__word--hire { left: 5%; top: 6%; width: 23%; rotate: -7deg; }
+.hire__word--advantage { left: 36%; top: 17%; width: 60%; rotate: 3deg; }
+.hire__word--unfair { left: 8%; top: 59%; width: 37%; rotate: -4deg; }
+.hire__word--your { left: 70%; top: 57%; width: 24%; rotate: 6deg; }
+
+/* hovering anywhere on it gives the words a little nudge */
+.hire__stage:hover .hire__word--hire,
+.hire__stage:focus-visible .hire__word--hire { rotate: -10deg; translate: 0 -4px; }
+.hire__stage:hover .hire__word--advantage,
+.hire__stage:focus-visible .hire__word--advantage { rotate: 1deg; translate: 0 -6px; }
+.hire__stage:hover .hire__word--unfair,
+.hire__stage:focus-visible .hire__word--unfair { rotate: -6deg; translate: 0 4px; }
+.hire__stage:hover .hire__word--your,
+.hire__stage:focus-visible .hire__word--your { rotate: 9deg; translate: 0 -4px; }
+.hire__stage:focus-visible { outline: 2px dashed var(--blue); outline-offset: 8px; }
+
+/* phones: twelve rows, the words stacked HIRE / YOUR / UNFAIR / ADVANTAGE */
+@media (max-width: 760px) {
+  .hire__stage { aspect-ratio: 690 / 1000; }
+  .hire__row { left: 3%; width: 94%; height: 4.3%; top: calc(2% + var(--r) * 8.1%); }
+  .hire__row:nth-child(n + 6) { display: block; }
+  .hire__word--hire { left: 6%; top: 5%; width: 42%; rotate: -5deg; }
+  .hire__word--your { left: 46%; top: 23%; width: 40%; rotate: 6deg; }
+  .hire__word--unfair { left: 0%; top: 41%; width: 68%; rotate: -4deg; }
+  .hire__word--advantage { left: 2%; top: 61%; width: 96%; rotate: 5deg; }
+}
