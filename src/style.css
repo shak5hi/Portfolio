@@ -281,7 +281,11 @@ html.js:not(.no-motion) .nav { visibility: hidden; }
 /* ---------- section 2: the sketch ---------- */
 .sketch {
   position: relative;
-  height: 100svh;
+  /* breathing room under the hero */
+  margin-top: clamp(72px, 14vh, 180px);
+  /* as tall as the drawing needs at full width (16:9), so wide screens see
+     all of it; narrower screens get a full screen and crop the sides */
+  height: max(56.25vw, 100svh);
   min-height: 480px;
   overflow: hidden;
 }
