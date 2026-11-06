@@ -35,16 +35,18 @@
       <a class="nav__logo" href="/" aria-label="Shakshi, home" id="logo"></a>
     </header>
 
-    <!-- index tabs: they stick out of the page's right edge like a notebook's.
-         Each one sweeps its colour across the page and opens onto its
-         section (src/folders.js). Rename a tab by changing its text. -->
-    <div class="page-edge" aria-hidden="true"></div>
+    <!-- folders: the page is the front folder, and the others sit behind it,
+         their tabs peeking out of the right edge. Clicking a tab sweeps that
+         folder's colour (--c) across and opens onto its section
+         (src/folders.js). data-also lists other sections that count as "in"
+         that folder; a folder with no section yet says "coming soon". -->
     <nav class="folders" aria-label="Sections">
-      <a class="folders__tab" href="#sketch" style="--c: #d6cbae; --ink: #141414; --slot: 0">a note</a>
-      <a class="folders__tab" href="#skills" style="--c: #2152e3; --ink: #ebe5d5; --slot: 1">what i do</a>
-      <a class="folders__tab" href="#work" style="--c: #141414; --ink: #ebe5d5; --slot: 2">work</a>
-      <a class="folders__tab" href="#faq" style="--c: #1638a8; --ink: #ebe5d5; --slot: 3">before you ask</a>
-      <a class="folders__tab" href="#hire" style="--c: #9fb4f5; --ink: #141414; --slot: 4">hire me</a>
+      <a class="folders__tab" href="#hero" style="--c: #c9d6de"><span>Who's this?</span></a>
+      <a class="folders__tab" href="#sketch" data-also="#skills #faq #hire" style="--c: #b9ae96"><span>Me, Basically</span></a>
+      <a class="folders__tab" href="#work" style="--c: #f3eee4"><span>The Builds</span></a>
+      <a class="folders__tab" href="#flops" style="--c: #a9bccf"><span>Flop File</span></a>
+      <a class="folders__tab" href="#side-quests" style="--c: #d9c6a6"><span>Side Quests</span></a>
+      <a class="folders__tab" href="#rabbithole" style="--c: #c2c9bd"><span>Rabbithole</span></a>
     </nav>
 
     <main>
