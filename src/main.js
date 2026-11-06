@@ -383,47 +383,60 @@ function playLoader() {
   return { tl, end: t + 0.7 };
 }
 
-/* ---------- section 2: the hand-drawn quote, with flowers behind it ---------- */
-// Painted flowers like the ones in the hero, in drawing coordinates (1600 x 900).
-// The inner ones hug the words so they still show when phones crop to the quote.
-const sketchFlowers = [
-  { x: 190, y: 190, s: 2.1, r: 12, o: 1 },
-  { x: 95, y: 520, s: 1.1, r: 40, o: 0.55 },
-  { x: 260, y: 760, s: 1.5, r: -20, o: 0.8 },
-  { x: 1410, y: 150, s: 1.4, r: 30, o: 0.7 },
-  { x: 1500, y: 470, s: 0.9, r: -8, o: 0.5 },
-  { x: 1400, y: 740, s: 2.3, r: 55, o: 1 },
-  { x: 470, y: 225, s: 0.75, r: 18, o: 0.6 },
-  { x: 1180, y: 235, s: 1, r: -35, o: 0.75 },
-  { x: 1080, y: 690, s: 0.7, r: 22, o: 0.6 },
-  { x: 420, y: 680, s: 0.85, r: -50, o: 0.7 },
-  { x: 820, y: 820, s: 0.6, r: 5, o: 0.45 },
+/* ---------- section 2: the hand-drawn quote, big, with little scribbles around it ---------- */
+// Tiny pen squiggles scattered round the edges, placed as % of the section.
+// Each is a wobbly zigzag, like testing a pen in a margin.
+const scribbles = [
+  { x: 19, y: 6, r: 52, s: 1 },
+  { x: 6, y: 21, r: 30, s: 0.85 },
+  { x: 15, y: 53, r: -35, s: 0.9 },
+  { x: 5, y: 80, r: -22, s: 0.95 },
+  { x: 86, y: 10, r: 68, s: 1.05 },
+  { x: 93, y: 36, r: 8, s: 0.8 },
+  { x: 88, y: 60, r: 4, s: 0.85 },
+  { x: 90, y: 75, r: 22, s: 0.8 },
+  { x: 30, y: 90, r: -12, s: 0.75 },
+  { x: 70, y: 92, r: 15, s: 0.7 },
 ];
 
-function addSketchFlowers(svg) {
-  const ns = 'http://www.w3.org/2000/svg';
-  const g = document.createElementNS(ns, 'g');
-  g.setAttribute('class', 'sketch__flowers');
-  g.innerHTML = `${brushFilter('sketch-brush')}<g filter="url(#sketch-brush)">${sketchFlowers
-    .map((f) => `<g opacity="${f.o}">${flower(f.x, f.y, f.s, f.r)}</g>`)
-    .join('')}</g>`;
-  // behind the strokes, just above the paper
-  const bg = svg.querySelector('.bg');
-  svg.insertBefore(g, bg ? bg.nextSibling : svg.firstChild);
+function scribblePath(seed) {
+  // 4-5 loose zigzags, each slightly different
+  let n = seed * 9301 + 49297;
+  const rnd = () => ((n = (n * 9301 + 49297) % 233280) / 233280);
+  const peaks = 4 + (seed % 2);
+  let d = 'M2 14';
+  for (let i = 0; i < peaks; i++) {
+    const x = 4 + i * 7;
+    d += ` Q${(x + 1.5 + rnd()).toFixed(1)} ${(2 + rnd() * 3).toFixed(1)} ${(x + 3.5).toFixed(1)} ${(9 + rnd() * 3).toFixed(1)}`;
+    d += ` Q${(x + 5 + rnd()).toFixed(1)} ${(16 + rnd() * 3).toFixed(1)} ${(x + 7).toFixed(1)} ${(11 + rnd() * 3).toFixed(1)}`;
+  }
+  return d;
 }
 
-// On screens narrower than the drawing (phones), zoom to the words so the
-// whole quote fits the width instead of cropping its ends off.
+function addScribbles(section) {
+  const layer = document.createElement('div');
+  layer.className = 'sketch__scribbles';
+  layer.setAttribute('aria-hidden', 'true');
+  layer.innerHTML = scribbles
+    .map(
+      (s, i) =>
+        `<svg viewBox="0 0 42 22"${s.y > 25 && s.y < 75 ? ' class="near-words"' : ''} style="left:${s.x}%;top:${s.y}%;transform:translate(-50%,-50%) rotate(${s.r}deg) scale(${s.s})"><path d="${scribblePath(i + 3)}"/></svg>`,
+    )
+    .join('');
+  section.appendChild(layer);
+}
+
+// Zoom the drawing to its words so the quote fills the section, centred,
+// at every screen size (the paper colour carries on past the drawing's edges).
 function frameToInk(svg, paths) {
   if (!svg || !paths.length) return;
-  const [, , VW, VH] = svg.getAttribute('viewBox').split(/\s+/).map(Number);
   let minX = Infinity;
   let maxX = -Infinity;
   let minY = Infinity;
   let maxY = -Infinity;
   paths.forEach((p) => {
     const b = p.getBBox();
-    // stray dots count for nothing (a full stop sits inside the words anyway)
+    // a stray dot counts for nothing (full stops sit inside the words anyway)
     if (b.width + b.height < 4) return;
     const pad = Number(p.getAttribute('stroke-width')) / 2 || 0;
     minX = Math.min(minX, b.x - pad);
@@ -434,19 +447,20 @@ function frameToInk(svg, paths) {
   if (!isFinite(minX)) return;
   const cx = (minX + maxX) / 2;
   const cy = (minY + maxY) / 2;
-  const inkW = (maxX - minX) * 1.12;
+  const inkW = maxX - minX;
+  const inkH = maxY - minY;
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
   const fit = () => {
     const box = svg.getBoundingClientRect();
     if (!box.width || !box.height) return;
     const aspect = box.width / box.height;
-    // the full drawing already shows every word
-    if (VH * aspect >= inkW) {
-      svg.setAttribute('viewBox', `0 0 ${VW} ${VH}`);
-      return;
-    }
-    const w = inkW;
-    const h = w / aspect;
+    const phone = box.width < 760;
+    // room around the words: more on wide screens so the scribbles have space
+    let w = inkW * (phone ? 1.12 : 1.5);
+    let h = inkH * (phone ? 1.3 : 1.28);
+    if (w / h > aspect) h = w / aspect;
+    else w = h * aspect;
     svg.setAttribute('viewBox', `${(cx - w / 2).toFixed(1)} ${(cy - h / 2).toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
   };
   fit();
@@ -460,11 +474,13 @@ fetch('/drawings/section-2.svg')
     if (!svg) return;
     art.innerHTML = svg;
     const root = art.querySelector('svg');
-    const strokes = root.querySelectorAll('path.stroke');
-    addSketchFlowers(root);
-    frameToInk(root, strokes);
+    frameToInk(root, root.querySelectorAll('path.stroke'));
+    addScribbles($('#sketch'));
   })
   .catch(() => {});
+
+// the paper plane needs three.js; fetch it after the page is up so the hero isn't kept waiting
+import('./plane.js').then((m) => m.initPlane({ reduce }));
 
 /* ---------- run ---------- */
 const fontsReady = document.fonts.ready;
