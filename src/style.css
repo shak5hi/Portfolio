@@ -598,6 +598,9 @@ html.has-cursor * { cursor: none !important; }
   margin: 0 auto;
 }
 .faq__head {
+  /* stays in view while the questions scroll past */
+  position: sticky;
+  top: calc(var(--nav-h) + 24px);
   margin: 0;
   font: 400 clamp(56px, 5.6vw, 108px) / 0.9 var(--big);
   text-transform: uppercase;
@@ -609,10 +612,8 @@ html.has-cursor * { cursor: none !important; }
   padding: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(3, auto);
-  grid-auto-flow: column; /* 01-03 down the first column, 04-06 down the second */
-  gap: clamp(36px, 6vh, 64px) clamp(32px, 4vw, 72px);
+  grid-template-columns: minmax(0, 1fr); /* 01 to 06, one under the other */
+  gap: clamp(28px, 4.5vh, 48px);
 }
 .faq__n {
   margin: 0 0 8px;
@@ -637,12 +638,13 @@ html.has-cursor * { cursor: none !important; }
 
 @media (max-width: 1000px) {
   .faq { grid-template-columns: 1fr; row-gap: 48px; }
+  .faq__head { position: static; }
   .faq__head br { display: none; }
 }
 @media (max-width: 760px) {
   .faq__q { white-space: normal; text-wrap: balance; }
 }
 @media (max-width: 640px) {
-  .faq__grid { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-flow: row; gap: 36px; }
+  .faq__grid { gap: 32px; }
   .faq__head { font-size: 17vw; }
 }
