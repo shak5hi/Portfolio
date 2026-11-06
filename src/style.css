@@ -92,25 +92,6 @@ html.no-intro .loader, html.no-motion .loader { display: none; }
 .nav__logo svg { width: 100%; height: auto; overflow: visible; }
 /* the signature is drawn thin; give it a confident marker weight here */
 .nav__logo path { stroke: var(--blue); stroke-width: 23; }
-.nav__menu {
-  width: 48px;
-  height: 48px;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  display: grid;
-  align-content: center;
-  gap: 7px;
-  padding: 0 6px;
-}
-.nav__menu span {
-  display: block;
-  height: 2px;
-  background: var(--blue);
-  transition: transform 0.35s var(--ease);
-}
-.nav__menu:hover span:first-child { transform: translateX(-4px); }
-.nav__menu:hover span:last-child { transform: translateX(4px); }
 
 /* ---------- hero ---------- */
 .hero {
@@ -290,39 +271,6 @@ html.no-intro .loader, html.no-motion .loader { display: none; }
   .big--name { order: 6; justify-self: end; }
 }
 
-/* ---------- menu ---------- */
-.menu {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  background: var(--blue);
-  color: var(--paper);
-  display: grid;
-  align-content: center;
-  padding: var(--gutter);
-}
-.menu[hidden] { display: none; }
-.menu__close {
-  position: absolute;
-  top: 20px;
-  right: var(--gutter);
-  width: 48px;
-  height: 48px;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-}
-.menu__close svg { width: 22px; height: 22px; }
-.menu__list { list-style: none; margin: 0; padding: 0; }
-.menu__list li {
-  display: flex;
-  align-items: baseline;
-  gap: 18px;
-  font: 400 clamp(64px, 13vw, 190px)/0.9 var(--big);
-}
-.menu__list small { font: 400 clamp(12px, 1.1vw, 16px)/1 var(--mono); opacity: 0.8; }
 
 /* before the intro plays, hide what will animate in */
 html.js:not(.no-motion) .hero__photo,

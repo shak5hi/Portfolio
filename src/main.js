@@ -18,28 +18,6 @@ const $ = (s) => document.querySelector(s);
 initCursor({ reduce });
 const NS = 'http://www.w3.org/2000/svg';
 
-/* ---------- menu ---------- */
-const menu = $('#menu');
-const openBtn = $('#menu-open');
-function setMenu(open) {
-  if (open) {
-    menu.hidden = false;
-    openBtn.setAttribute('aria-expanded', 'true');
-    if (!reduce) {
-      gsap.fromTo(menu, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.7, ease: 'expo.inOut' });
-      gsap.from('.menu__list li', { yPercent: 60, opacity: 0, stagger: 0.07, duration: 0.8, ease: 'expo.out', delay: 0.3 });
-    }
-    $('#menu-close').focus();
-  } else {
-    const done = () => { menu.hidden = true; openBtn.setAttribute('aria-expanded', 'false'); openBtn.focus(); };
-    if (reduce) return done();
-    gsap.to(menu, { clipPath: 'inset(0 0 100% 0)', duration: 0.6, ease: 'expo.inOut', onComplete: done });
-  }
-}
-openBtn.addEventListener('click', () => setMenu(true));
-$('#menu-close').addEventListener('click', () => setMenu(false));
-window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
-
 /* ---------- ink: brush lines around the photo, flowers in the hair ---------- */
 function rng(seed) {
   let s = seed >>> 0;
