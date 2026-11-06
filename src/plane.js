@@ -228,9 +228,10 @@ export function initPlane({ reduce = false } = {}) {
   let hoverAmt = 0;
 
   const drift = { x: 0, y: 0 }; // the idle figure-eight it floats in
+  const dock = { x: 0, y: 0 }; // moves it down into the corner near the end
   const place = () => {
-    const x = fly.x + magnet.x + drift.x;
-    const y = fly.y + magnet.y + drift.y;
+    const x = fly.x + magnet.x + drift.x + dock.x;
+    const y = fly.y + magnet.y + drift.y + dock.y;
     btn.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${fly.s.toFixed(3)})`;
     btn.style.opacity = fly.o.toFixed(3);
   };
@@ -388,10 +389,12 @@ export function initPlane({ reduce = false } = {}) {
       tl = gsap.to(fly, { o: 0, duration: 0.3, onComplete: done });
       return;
     }
-    // climbs away off the top right
+    // climbs away off the page: out of the side if it's sitting in the
+    // corner, off the top right otherwise
+    const out = docked ? { x: 420, y: -180 } : { x: 260, y: -420 };
     tl = gsap
       .timeline({ onComplete: done })
-      .to(fly, { x: 260, y: -420, s: 0.7, duration: 0.8, ease: 'power2.in' }, 0)
+      .to(fly, { ...out, s: 0.7, duration: 0.8, ease: 'power2.in' }, 0)
       .to(pose, { pitch: -0.6, roll: 0.8, duration: 0.8, ease: 'power2.in' }, 0);
   }
   fly.o = 0;
@@ -399,7 +402,24 @@ export function initPlane({ reduce = false } = {}) {
 
   // visible once the hero is mostly scrolled past, until the footer (when there is one)
   const stopAt = () => document.querySelector('[data-plane-stop]');
+
+  // over the "hire your unfair advantage" section it drops to the bottom corner
+  let docked = false;
+  const dockTo = (on) => {
+    if (on === docked) return;
+    docked = on;
+    let y = 0;
+    if (on) {
+      const r = btn.getBoundingClientRect();
+      const restTop = r.top - fly.y - magnet.y - drift.y - dock.y;
+      y = window.innerHeight - r.height - 16 - restTop;
+    }
+    gsap.to(dock, { x: on ? 12 : 0, y, duration: reduce ? 0 : 1, ease: 'power3.inOut', overwrite: true });
+  };
+
   const check = () => {
+    const hire = document.getElementById('hire');
+    dockTo(!!hire && hire.getBoundingClientRect().top < window.innerHeight * 0.55);
     const hero = document.getElementById('hero');
     const past = hero ? hero.getBoundingClientRect().bottom < window.innerHeight * 0.45 : window.scrollY > 200;
     const foot = stopAt();
