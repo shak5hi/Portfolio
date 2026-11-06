@@ -3,6 +3,8 @@ import { gsap } from 'gsap';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initCursor } from './cursor.js';
+import { initSkills } from './skills.js';
+import { initWork } from './work.js';
 
 gsap.registerPlugin(DrawSVGPlugin, ScrollTrigger);
 
@@ -479,7 +481,9 @@ fetch('/drawings/section-2.svg')
   })
   .catch(() => {});
 
-import('./skills.js').then((m) => m.initSkills({ reduce }));
+// pinned sections, set up in page order so each pin knows where the last one ends
+initSkills({ reduce });
+initWork({ reduce });
 
 // the paper plane needs three.js; fetch it after the page is up so the hero isn't kept waiting
 import('./plane.js').then((m) => m.initPlane({ reduce }));
