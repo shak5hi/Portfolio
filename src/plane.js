@@ -9,73 +9,117 @@ import {
   Scene,
   PerspectiveCamera,
   Group,
-  BufferGeometry,
-  Float32BufferAttribute,
-  MeshStandardMaterial,
-  MeshBasicMaterial,
-  LineBasicMaterial,
+  MeshPhysicalMaterial,
   Mesh,
-  LineSegments,
-  EdgesGeometry,
   Shape,
-  ShapeGeometry,
-  AmbientLight,
+  ExtrudeGeometry,
   DirectionalLight,
   HemisphereLight,
-  DoubleSide,
+  PMREMGenerator,
   SRGBColorSpace,
-  Vector3,
+  NeutralToneMapping,
 } from 'three';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const EMAIL = 'pysharma0612@gmail.com';
+export const EMAIL = 'shaksshisharma@gmail.com';
 const SUBJECT = 'Hi Shakshi!';
 
-const BLUE = 0x2152e3;
-const FOLD = 0x173fb8;
+const BLUE = 0x1e4ad9; // a touch deeper than the logo blue, so it reads the same once lit
 
-/* ---------- the model: folded from flat triangles, like real paper ---------- */
-// Nose points down -x. Units are roughly "plane lengths".
-function buildPlane() {
-  const N = [-1.25, 0.02, 0]; // nose
-  const T = [0.95, 0.06, 0]; // tail, top of the centre fold
-  const K = [0.95, -0.46, 0]; // tail, bottom of the keel
-  const WL = [0.95, 0.13, -0.27]; // the wing fold, left
-  const WR = [0.95, 0.13, 0.27];
-  const LL = [1.02, 0.44, -0.86]; // wing tips, folded up into a V
-  const LR = [1.02, 0.44, 0.86];
-  const KL = [0.95, -0.42, -0.06]; // keel halves, just apart
-  const KR = [0.95, -0.42, 0.06];
+/* ---------- the model: a chunky, glossy toy paper plane ---------- */
+// Nose points down -x, span along z, y is up. Each panel is a rounded triangle
+// with some thickness and soft bevelled edges, folded into place like paper.
 
-  const tris = [
-    // wings: inner panel and outer panel each side, so the fold catches light
-    [N, T, WL], [N, WL, LL],
-    [N, WR, T], [N, LR, WR],
-    // the keel hanging under the centre fold
-    [N, KL, T], [N, T, KR],
-    [N, K, KL], [N, KR, K],
-  ];
-  const pos = [];
-  tris.forEach((t) => t.forEach((v) => pos.push(...v)));
-  const geo = new BufferGeometry();
-  geo.setAttribute('position', new Float32BufferAttribute(pos, 3));
-  geo.computeVertexNormals();
+// a triangle with its corners rounded off
+function roundedTri(pts, r) {
+  const s = new Shape();
+  const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const p = pts[i];
+    const a = pts[(i - 1 + n) % n];
+    const b = pts[(i + 1) % n];
+    const da = Math.hypot(a[0] - p[0], a[1] - p[1]);
+    const db = Math.hypot(b[0] - p[0], b[1] - p[1]);
+    const ra = Math.min(r, da / 3);
+    const rb = Math.min(r, db / 3);
+    const p1 = [p[0] + ((a[0] - p[0]) / da) * ra, p[1] + ((a[1] - p[1]) / da) * ra];
+    const p2 = [p[0] + ((b[0] - p[0]) / db) * rb, p[1] + ((b[1] - p[1]) / db) * rb];
+    if (i === 0) s.moveTo(...p1);
+    else s.lineTo(...p1);
+    s.quadraticCurveTo(p[0], p[1], ...p2);
+  }
+  s.closePath();
+  return s;
+}
 
-  const paper = new MeshStandardMaterial({
-    color: BLUE,
-    roughness: 0.72,
-    metalness: 0,
-    side: DoubleSide,
-    flatShading: true,
+function panel(pts, mat, { depth = 0.05, bevel = 0.035, r = 0.1 } = {}) {
+  const geo = new ExtrudeGeometry(roundedTri(pts, r), {
+    depth,
+    bevelEnabled: true,
+    bevelThickness: bevel,
+    bevelSize: bevel,
+    bevelSegments: 4,
+    curveSegments: 8,
   });
-  const body = new Mesh(geo, paper);
-  const folds = new LineSegments(
-    new EdgesGeometry(geo, 1),
-    new LineBasicMaterial({ color: 0x9db4ff, transparent: true, opacity: 0.5 }),
-  );
+  geo.translate(0, 0, -depth / 2); // centre the thickness on the fold
+  return new Mesh(geo, mat);
+}
 
-  // a small paper heart stuck on the near wing, like the seal on a letter
+function buildPlane() {
+  const paper = new MeshPhysicalMaterial({
+    color: BLUE,
+    roughness: 0.32,
+    metalness: 0,
+    clearcoat: 1,
+    clearcoatRoughness: 0.12,
+    envMapIntensity: 0.3,
+  });
+  const under = paper.clone();
+  under.color.set(0x1a44c4); // the folded-under keel sits a shade deeper
+
+  const plane = new Group();
+
+  // wings: long triangles from the nose back to the tail, each lying flat
+  // (span along z), then tipped up so the plane has its V
+  const wing = (side) => {
+    const g = new Group();
+    const m = panel(
+      [
+        [-1.3, 0],
+        [0.95, 0],
+        [1.05, 0.88],
+      ],
+      paper,
+    );
+    m.rotation.x = side > 0 ? Math.PI / 2 : -Math.PI / 2;
+    g.add(m);
+    g.rotation.x = -side * 0.3; // dihedral
+    g.position.y = 0.02;
+    return g;
+  };
+  const right = wing(1);
+  const left = wing(-1);
+
+  // the keel: the folded-down body that hangs under the centre crease
+  const keel = new Group();
+  [-1, 1].forEach((side) => {
+    const k = panel(
+      [
+        [-1.25, 0],
+        [0.95, 0],
+        [0.95, -0.36],
+      ],
+      under,
+      { depth: 0.03, bevel: 0.025, r: 0.07 },
+    );
+    k.rotation.x = side * 0.12;
+    k.position.z = side * 0.03;
+    keel.add(k);
+  });
+
+  // a puffy heart sticker on the near wing, like the seal on a letter
   const h = new Shape();
   h.moveTo(0, -0.5);
   h.bezierCurveTo(-0.15, -0.3, -0.62, -0.05, -0.5, 0.25);
@@ -83,22 +127,17 @@ function buildPlane() {
   h.bezierCurveTo(0.08, 0.5, 0.4, 0.52, 0.5, 0.25);
   h.bezierCurveTo(0.62, -0.05, 0.15, -0.3, 0, -0.5);
   const heart = new Mesh(
-    new ShapeGeometry(h, 12),
-    new MeshBasicMaterial({ color: 0xf6f1e4, side: DoubleSide }),
+    new ExtrudeGeometry(h, { depth: 0.12, bevelEnabled: true, bevelThickness: 0.12, bevelSize: 0.1, bevelSegments: 5, curveSegments: 16 }),
+    new MeshPhysicalMaterial({ color: 0xfaf4e6, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.1, envMapIntensity: 0.5 }),
   );
-  heart.scale.setScalar(0.21);
-  // lie it flat on the near wing's outer panel, its point towards the nose
-  const a = new Vector3(...N);
-  const b = new Vector3(...LR);
-  const w = new Vector3(...WR);
-  const normal = new Vector3().subVectors(w, a).cross(new Vector3().subVectors(b, a)).normalize();
-  if (normal.y < 0) normal.negate();
-  heart.position.copy(a.multiplyScalar(0.3).add(b.multiplyScalar(0.35)).add(w.multiplyScalar(0.35))).addScaledVector(normal, 0.012);
-  heart.quaternion.setFromUnitVectors(new Vector3(0, 0, 1), normal);
-  heart.rotateZ(Math.PI / 2 + 0.3);
+  heart.scale.setScalar(0.2);
+  // sit it on the right wing's top face (wing local: x along, y across the span)
+  // the wing's top face is its local -z once folded, so the heart sits there
+  heart.position.set(0.3, 0.4, -0.065);
+  heart.rotation.set(0, Math.PI, -(Math.PI / 2 + 0.25)); // facing up, point to the nose
+  right.children[0].add(heart);
 
-  const plane = new Group();
-  plane.add(body, folds, heart);
+  plane.add(left, right, keel);
   return plane;
 }
 
@@ -138,24 +177,25 @@ export function initPlane({ reduce = false } = {}) {
   try {
     renderer = new WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
     renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = NeutralToneMapping;
+    renderer.toneMappingExposure = 0.88;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.domElement.setAttribute('aria-hidden', 'true');
     btn.appendChild(renderer.domElement);
 
     scene = new Scene();
     camera = new PerspectiveCamera(28, 1, 0.1, 50);
-    camera.position.set(0, 2.7, 5.5);
+    camera.position.set(0, 2.2, 5.4);
     camera.lookAt(0, 0, 0);
 
-    // a warm key light from the top left, cool fill, and a rim from behind
-    scene.add(new HemisphereLight(0xfff4e0, 0x1b2a66, 0.7));
-    scene.add(new AmbientLight(0xffffff, 0.12));
-    const sun = new DirectionalLight(0xfff6ea, 2.8);
-    sun.position.set(2.5, 4, 5);
+    // a soft studio room to reflect in (that's the gloss), plus a warm key light
+    const pmrem = new PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    pmrem.dispose();
+    scene.add(new HemisphereLight(0xfff4e0, 0x22337a, 0.5));
+    const sun = new DirectionalLight(0xfff6ea, 1.6);
+    sun.position.set(-2, 5, 4);
     scene.add(sun);
-    const rim = new DirectionalLight(0xbcd0ff, 0.9);
-    rim.position.set(3, 1, -4);
-    scene.add(rim);
 
     plane = buildPlane();
     scene.add(plane);
@@ -185,14 +225,18 @@ export function initPlane({ reduce = false } = {}) {
   let visible = false;
   let busy = false; // launching
   let hover = false;
+  let hoverAmt = 0;
 
+  const drift = { x: 0, y: 0 }; // the idle figure-eight it floats in
   const place = () => {
-    btn.style.transform = `translate3d(${(fly.x + magnet.x).toFixed(1)}px, ${(fly.y + magnet.y).toFixed(1)}px, 0) scale(${fly.s.toFixed(3)})`;
+    const x = fly.x + magnet.x + drift.x;
+    const y = fly.y + magnet.y + drift.y;
+    btn.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${fly.s.toFixed(3)})`;
     btn.style.opacity = fly.o.toFixed(3);
   };
 
   // resting pose: nose towards the page (left), turned a little to us
-  const base = { yaw: 0.8, pitch: 0.2, roll: 0.1 };
+  const base = { yaw: 0.25, pitch: 0.3, roll: 0.55 };
   if (import.meta.env.DEV) window.__plane = { base, camera, render: () => renderer?.render(scene, camera) };
 
   let t0 = performance.now();
@@ -205,16 +249,25 @@ export function initPlane({ reduce = false } = {}) {
     lean.pitch += (look.y - lean.pitch) * k;
     tilt *= 0.92;
 
+    // idle: float round a lazy figure-eight, banking into each turn
+    const still = reduce || busy;
+    const dx = still ? 0 : Math.sin(t * 0.8) * 14;
+    const dy = still ? 0 : Math.sin(t * 1.6) * 10;
+    drift.x += (dx - drift.x) * 0.1;
+    drift.y += (dy - drift.y) * 0.1;
+    const bank = still ? 0 : Math.cos(t * 0.8) * 0.32; // leans the way it's heading
+    const nod = still ? 0 : Math.cos(t * 1.6) * 0.12;
+    hoverAmt += ((hover ? 1 : 0) - hoverAmt) * 0.12;
+    const wiggle = hoverAmt * Math.sin(t * 14) * 0.08;
+
     if (renderer) {
-      const bob = reduce ? 0 : Math.sin(t * 1.6) * 0.07;
-      const sway = reduce ? 0 : Math.sin(t * 1.1 + 1) * 0.07;
-      plane.position.y = bob;
+      plane.position.y = still ? 0 : Math.sin(t * 1.6) * 0.06;
       plane.rotation.order = 'YZX';
       // it turns its nose towards the cursor, but only so far
-      plane.rotation.y = base.yaw + pose.yaw - lean.yaw * 0.4;
-      plane.rotation.z = base.pitch + pose.pitch - lean.pitch * 0.3 + tilt;
-      plane.rotation.x = base.roll + pose.roll + sway - lean.yaw * 0.2;
-      plane.scale.setScalar(pose.scale * (hover ? 1.08 : 1));
+      plane.rotation.y = base.yaw + pose.yaw - lean.yaw * 0.45 + wiggle;
+      plane.rotation.z = base.pitch + pose.pitch - lean.pitch * 0.35 + tilt + nod;
+      plane.rotation.x = base.roll + pose.roll + bank - lean.yaw * 0.25 + wiggle;
+      plane.scale.setScalar(pose.scale * (1 + hoverAmt * 0.1));
       renderer.render(scene, camera);
     }
     place();
@@ -279,6 +332,31 @@ export function initPlane({ reduce = false } = {}) {
       },
     });
   }
+
+  /* ----- every few seconds, a little trick: a barrel roll, or a swoop ----- */
+  let trick = 0;
+  let trickN = 0;
+  const tricks = () => {
+    clearTimeout(trick);
+    trick = setTimeout(() => {
+      if (visible && !busy && !hover && !reduce && !document.hidden) {
+        const tl2 = gsap.timeline();
+        if (trickN++ % 2 === 0) {
+          tl2.to(pose, { roll: '+=' + Math.PI * 2, duration: 1.1, ease: 'power2.inOut' })
+            .to(fly, { y: -26, duration: 0.55, ease: 'sine.out', yoyo: true, repeat: 1 }, 0)
+            .set(pose, { roll: 0 });
+        } else {
+          tl2.to(pose, { pitch: 0.55, duration: 0.35, ease: 'sine.out' })
+            .to(fly, { y: -38, x: -14, duration: 0.45, ease: 'power2.out' }, 0)
+            .to(pose, { pitch: -0.3, duration: 0.5, ease: 'sine.inOut' })
+            .to(fly, { y: 0, x: 0, duration: 0.7, ease: 'back.out(2)' }, 0.45)
+            .to(pose, { pitch: 0, duration: 0.5, ease: 'sine.out' });
+        }
+      }
+      tricks();
+    }, 5200 + Math.random() * 2600);
+  };
+  tricks();
 
   /* ----- in and out ----- */
   let tl = null;
