@@ -289,6 +289,13 @@ html.js:not(.no-motion) .nav { visibility: hidden; }
   min-height: 480px;
   overflow: hidden;
 }
+.sketch__flowers .flower { fill: var(--blue); }
+
+/* phones zoom to the quote, so a full screen of paper around it is just empty */
+@media (max-width: 760px) {
+  .sketch { height: 64svh; min-height: 420px; margin-top: 48px; }
+}
+
 .sketch__art, .sketch__art svg {
   display: block;
   width: 100%;

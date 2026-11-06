@@ -3,7 +3,6 @@ import { gsap } from 'gsap';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initCursor } from './cursor.js';
-import { drawIn } from './draw-in.js';
 
 gsap.registerPlugin(DrawSVGPlugin, ScrollTrigger);
 
@@ -384,35 +383,71 @@ function playLoader() {
   return { tl, end: t + 0.7 };
 }
 
-/* ---------- section 2: the sketch draws itself in when it comes into view ---------- */
-// On screens narrower than the drawing (phones), crop it around where the
-// ink actually is instead of always keeping the middle.
+/* ---------- section 2: the hand-drawn quote, with flowers behind it ---------- */
+// Painted flowers like the ones in the hero, in drawing coordinates (1600 x 900).
+// The inner ones hug the words so they still show when phones crop to the quote.
+const sketchFlowers = [
+  { x: 190, y: 190, s: 2.1, r: 12, o: 1 },
+  { x: 95, y: 520, s: 1.1, r: 40, o: 0.55 },
+  { x: 260, y: 760, s: 1.5, r: -20, o: 0.8 },
+  { x: 1410, y: 150, s: 1.4, r: 30, o: 0.7 },
+  { x: 1500, y: 470, s: 0.9, r: -8, o: 0.5 },
+  { x: 1400, y: 740, s: 2.3, r: 55, o: 1 },
+  { x: 470, y: 225, s: 0.75, r: 18, o: 0.6 },
+  { x: 1180, y: 235, s: 1, r: -35, o: 0.75 },
+  { x: 1080, y: 690, s: 0.7, r: 22, o: 0.6 },
+  { x: 420, y: 680, s: 0.85, r: -50, o: 0.7 },
+  { x: 820, y: 820, s: 0.6, r: 5, o: 0.45 },
+];
+
+function addSketchFlowers(svg) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const g = document.createElementNS(ns, 'g');
+  g.setAttribute('class', 'sketch__flowers');
+  g.innerHTML = `${brushFilter('sketch-brush')}<g filter="url(#sketch-brush)">${sketchFlowers
+    .map((f) => `<g opacity="${f.o}">${flower(f.x, f.y, f.s, f.r)}</g>`)
+    .join('')}</g>`;
+  // behind the strokes, just above the paper
+  const bg = svg.querySelector('.bg');
+  svg.insertBefore(g, bg ? bg.nextSibling : svg.firstChild);
+}
+
+// On screens narrower than the drawing (phones), zoom to the words so the
+// whole quote fits the width instead of cropping its ends off.
 function frameToInk(svg, paths) {
   if (!svg || !paths.length) return;
   const [, , VW, VH] = svg.getAttribute('viewBox').split(/\s+/).map(Number);
   let minX = Infinity;
   let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
   paths.forEach((p) => {
     const b = p.getBBox();
+    // stray dots count for nothing (a full stop sits inside the words anyway)
+    if (b.width + b.height < 4) return;
     const pad = Number(p.getAttribute('stroke-width')) / 2 || 0;
-    if (b.width + b.height === 0 && b.x === 0) return;
     minX = Math.min(minX, b.x - pad);
     maxX = Math.max(maxX, b.x + b.width + pad);
+    minY = Math.min(minY, b.y - pad);
+    maxY = Math.max(maxY, b.y + b.height + pad);
   });
   if (!isFinite(minX)) return;
-  const centre = (minX + maxX) / 2;
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  const inkW = (maxX - minX) * 1.12;
 
   const fit = () => {
     const box = svg.getBoundingClientRect();
     if (!box.width || !box.height) return;
     const aspect = box.width / box.height;
-    if (aspect >= VW / VH) {
+    // the full drawing already shows every word
+    if (VH * aspect >= inkW) {
       svg.setAttribute('viewBox', `0 0 ${VW} ${VH}`);
       return;
     }
-    const w = VH * aspect;
-    const x = Math.min(Math.max(centre - w / 2, 0), VW - w);
-    svg.setAttribute('viewBox', `${x.toFixed(1)} 0 ${w.toFixed(1)} ${VH}`);
+    const w = inkW;
+    const h = w / aspect;
+    svg.setAttribute('viewBox', `${(cx - w / 2).toFixed(1)} ${(cy - h / 2).toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
   };
   fit();
   new ResizeObserver(fit).observe(svg);
@@ -424,16 +459,10 @@ fetch('/drawings/section-2.svg')
     const art = $('#sketch-art');
     if (!svg) return;
     art.innerHTML = svg;
-    const strokes = art.querySelectorAll('path');
-    frameToInk(art.querySelector('svg'), strokes);
-    if (reduce) return;
-    gsap.set(strokes, { drawSVG: '0%' });
-    ScrollTrigger.create({
-      trigger: '#sketch',
-      start: 'top 65%',
-      once: true,
-      onEnter: () => drawIn(strokes, { total: 5 }),
-    });
+    const root = art.querySelector('svg');
+    const strokes = root.querySelectorAll('path.stroke');
+    addSketchFlowers(root);
+    frameToInk(root, strokes);
   })
   .catch(() => {});
 
