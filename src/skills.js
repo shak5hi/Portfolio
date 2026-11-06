@@ -56,44 +56,85 @@ export function initSkills({ reduce = false } = {}) {
     });
   };
 
+  // the heading settles in word by word, then the paragraph and the button
+  const head = section.querySelector('.skills__head');
+  const label = head.textContent.trim();
+  head.setAttribute('aria-label', label);
+  head.innerHTML = label
+    .split(/\s+/)
+    .map((w) => `<span class="skills__hw" aria-hidden="true">${w}</span>`)
+    .join(' ');
+  const settle = (tl) =>
+    tl
+      .from(head.querySelectorAll('.skills__hw'), {
+        yPercent: 70,
+        opacity: 0,
+        filter: 'blur(8px)',
+        stagger: 0.06,
+        duration: 0.5,
+        ease: 'power3.out',
+      })
+      .from([section.querySelector('.skills__body'), section.querySelector('.skills__btn')], {
+        y: 24,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.45,
+        ease: 'power2.out',
+      }, '-=0.25');
+
   const mm = gsap.matchMedia();
 
-  // wide screens: pin, and slide the list up past the copy
+  // wide screens: the copy settles as the section arrives, the section pins
+  // with the copy alone in the middle for a beat, and then the list rises in
+  // from the bottom and slides up past it
   mm.add('(min-width: 761px)', () => {
     const copy = section.querySelector('.skills__copy');
-    // the first item starts level with the heading and the list scrolls
-    // until its last item has passed the same line
-    const startY = () => copy.offsetTop - list.offsetTop;
-    const endY = () => startY() - list.offsetHeight + list.lastElementChild.offsetHeight;
-    const tween = gsap.fromTo(
-      list,
-      { y: startY },
-      {
-        y: endY,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: section,
-          pin,
-          start: 'top top',
-          end: () => `+=${Math.round((startY() - endY()) * 1.2)}`,
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-          onRefresh: focus,
-        },
-      },
+    const intro = settle(
+      gsap.timeline({
+        scrollTrigger: { trigger: section, start: 'top 75%', end: 'top 5%', scrub: 0.6 },
+      }),
     );
+
+    // list positions: first item just below the bottom of the screen, to the
+    // last item level with the top of the heading
+    const startY = () => pin.offsetHeight - list.offsetTop + 8;
+    const endY = () => copy.offsetTop - list.offsetTop - list.offsetHeight + list.lastElementChild.offsetHeight;
+    const travel = () => startY() - endY();
+    const HOLD = 0.3; // the copy alone, as a share of the list's travel
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        pin,
+        start: 'top top',
+        end: () => `+=${Math.round(travel() * (1 + HOLD) * 1.1)}`,
+        scrub: 0.6,
+        invalidateOnRefresh: true,
+        onRefresh: focus,
+      },
+    });
+    tl.fromTo(list, { y: startY }, { y: startY, duration: HOLD, ease: 'none' }) // the copy, alone, for a beat
+      .fromTo(list, { y: startY }, { y: endY, duration: 1, ease: 'none', immediateRender: false });
+
     gsap.ticker.add(focus); // keeps up while the scrub eases
     return () => {
       gsap.ticker.remove(focus);
-      tween.scrollTrigger?.kill();
-      tween.kill();
+      intro.scrollTrigger?.kill();
+      intro.kill();
+      tl.scrollTrigger?.kill();
+      tl.kill();
       gsap.set(list, { clearProps: 'transform' });
     };
   });
 
-  // phones: no pin, words just come into focus as you scroll to them
+  // phones: no pin. The copy settles once you reach it, and the list's words
+  // come into focus as you scroll to them
   mm.add('(max-width: 760px)', () => {
+    const intro = settle(gsap.timeline({ scrollTrigger: { trigger: section, start: 'top 70%', once: true } }));
     gsap.ticker.add(focus);
-    return () => gsap.ticker.remove(focus);
+    return () => {
+      gsap.ticker.remove(focus);
+      intro.kill();
+    };
   });
 }

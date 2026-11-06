@@ -443,27 +443,27 @@ html.has-cursor * { cursor: none !important; }
 }
 .skills__copy {
   justify-self: end;
-  max-width: 44rem;
+  max-width: 36rem;
   text-align: right;
 }
 .skills__head {
   margin: 0 0 clamp(16px, 2.2vh, 28px);
-  font: 400 clamp(36px, 3.6vw, 70px) / 0.98 var(--big);
+  font: 400 clamp(30px, 2.9vw, 56px) / 0.98 var(--big);
   text-transform: uppercase;
   color: var(--blue);
   text-wrap: balance;
 }
 .skills__body {
-  font: 400 clamp(16px, 1.2vw, 21px) / 1.5 var(--text);
+  margin: 0;
+  font: 400 clamp(15px, 0.98vw, 18px) / 1.55 var(--text);
   color: var(--ink);
 }
-.skills__body p { margin: 0 0 0.7em; }
 .skills__body em { font-style: normal; font-weight: 600; }
 .skills__btn {
   display: inline-flex;
   gap: 0.6em;
   margin-top: clamp(14px, 2vh, 26px);
-  font: 400 clamp(13px, 0.95vw, 16px) / 1.2 var(--mono);
+  font: 400 clamp(12px, 0.8vw, 14px) / 1.2 var(--mono);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--blue);
@@ -487,14 +487,14 @@ html.has-cursor * { cursor: none !important; }
   list-style: none;
   justify-self: start;
   align-self: start;
-  font: 400 clamp(44px, 5.6vw, 108px) / 1 var(--big);
+  font: 400 clamp(40px, 4.5vw, 86px) / 1 var(--big);
   height: max-content;
   text-transform: uppercase;
   color: var(--ink);
   will-change: transform;
 }
 .skills__list li { margin: 0 0 0.06em; }
-.skills__w { display: inline-block; }
+.skills__w, .skills__hw { display: inline-block; }
 
 /* phones: copy on top, list underneath, no pinning */
 @media (max-width: 760px) {
