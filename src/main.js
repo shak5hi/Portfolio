@@ -385,6 +385,39 @@ function playLoader() {
 }
 
 /* ---------- section 2: the sketch draws itself in when it comes into view ---------- */
+// On screens narrower than the drawing (phones), crop it around where the
+// ink actually is instead of always keeping the middle.
+function frameToInk(svg, paths) {
+  if (!svg || !paths.length) return;
+  const [, , VW, VH] = svg.getAttribute('viewBox').split(/\s+/).map(Number);
+  let minX = Infinity;
+  let maxX = -Infinity;
+  paths.forEach((p) => {
+    const b = p.getBBox();
+    const pad = Number(p.getAttribute('stroke-width')) / 2 || 0;
+    if (b.width + b.height === 0 && b.x === 0) return;
+    minX = Math.min(minX, b.x - pad);
+    maxX = Math.max(maxX, b.x + b.width + pad);
+  });
+  if (!isFinite(minX)) return;
+  const centre = (minX + maxX) / 2;
+
+  const fit = () => {
+    const box = svg.getBoundingClientRect();
+    if (!box.width || !box.height) return;
+    const aspect = box.width / box.height;
+    if (aspect >= VW / VH) {
+      svg.setAttribute('viewBox', `0 0 ${VW} ${VH}`);
+      return;
+    }
+    const w = VH * aspect;
+    const x = Math.min(Math.max(centre - w / 2, 0), VW - w);
+    svg.setAttribute('viewBox', `${x.toFixed(1)} 0 ${w.toFixed(1)} ${VH}`);
+  };
+  fit();
+  new ResizeObserver(fit).observe(svg);
+}
+
 fetch('/drawings/section-2.svg')
   .then((r) => (r.ok ? r.text() : ''))
   .then((svg) => {
@@ -392,6 +425,7 @@ fetch('/drawings/section-2.svg')
     if (!svg) return;
     art.innerHTML = svg;
     const strokes = art.querySelectorAll('path');
+    frameToInk(art.querySelector('svg'), strokes);
     if (reduce) return;
     gsap.set(strokes, { drawSVG: '0%' });
     ScrollTrigger.create({
