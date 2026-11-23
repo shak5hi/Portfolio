@@ -276,9 +276,209 @@ html.no-intro .loader, html.no-motion .loader { display: none; }
 html.js:not(.no-motion) .hero__photo,
 html.js:not(.no-motion) .big,
 html.js:not(.no-motion) .visitor,
-html.js:not(.no-motion) .nav { visibility: hidden; }
+html.js:not(.no-motion) .home .nav { visibility: hidden; }
 
 /* ---------- section 2: the sketch ---------- */
+/* ---------- "the builds": the opener of builds.html ---------- */
+/* a wall of one word in big bold type, cut off at the edges, with a phrase in
+   blue split across the two middle rows (src/everything.js). It types itself
+   in: each word is hidden until it's switched on, and the newest one lands a
+   touch big (the stomp). --fade goes 0 → 1 as you scroll on. */
+.everything {
+  --fade: 0;
+  position: relative;
+  height: 100svh;
+  min-height: 480px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.everything__wall {
+  margin: 0;
+  padding-top: calc(var(--nav-h) * 0.6);
+  font: 700 clamp(44px, 6.95vw, 132px) / 0.95 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: calc(1 - var(--fade) * 0.88);
+  user-select: none;
+}
+.everything__line { display: flex; white-space: pre; overflow-x: clip; }
+.everything__line--top > span,
+.everything__line--bottom > span,
+.everything__tail > span,
+.everything__hl > span { flex: 0 0 auto; }
+.everything__hl { flex: 0 0 auto; }
+.everything__line--top { justify-content: flex-end; }
+.everything__tail { flex: 1 1 0%; min-width: 0; display: flex; overflow-x: clip; }
+.everything__line--first .everything__tail { justify-content: flex-end; }
+.everything__line--last .everything__tail { margin-left: 0.28em; }
+.everything__hl { display: flex; color: #2152e3; }
+.everything__line--first .everything__hl { padding-right: 0.03em; }
+.everything__w { display: inline-block; transform-origin: 50% 100%; }
+/* typing: hidden until switched on; the newest word stomps */
+.everything__wall:not(.is-done) .everything__w:not(.is-on) { visibility: hidden; }
+.everything__wall:not(.is-done) .everything__w.is-on { animation: stomp 0.22s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+@keyframes stomp {
+  from { transform: scale(1.15); }
+  to { transform: none; }
+}
+
+/* each tab's page is the colour of its tab */
+body.page-builds { --paper: #f3eee4; }
+
+.page-inner .nav { position: absolute; top: 0; left: 0; right: var(--rail); z-index: 3; }
+
+/* the builds page: the wall sticks to the top and fades (--fade) while the
+   posters scroll up over it (src/buildlist.js) */
+.page-builds .everything { position: sticky; top: 0; z-index: 0; background: transparent; }
+.builds {
+  position: relative;
+  z-index: 1;
+  margin-top: -18svh;
+  padding: 0 calc(var(--rail) + clamp(20px, 5vw, 80px)) clamp(100px, 12vw, 180px) clamp(20px, 5vw, 80px);
+}
+.builds__list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1180px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(70px, 8vw, 130px) clamp(28px, 5vw, 90px);
+}
+.bp:nth-child(even) { margin-top: clamp(0px, 14vw, 220px); }
+.bp__link { display: block; color: inherit; text-decoration: none; }
+
+/* the poster: the project's colour, a little grain, a big confession with
+   its crossed-out word and the handwritten fix, a stamp counting the flops,
+   and a taped-on, tinted screenshot hanging off the edge */
+.bp__poster {
+  display: block;
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  padding: 7% 7% 0;
+  border-radius: 6px;
+  color: var(--poster-ink);
+  background:
+    radial-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1.3px) 0 0 / 4px 4px,
+    radial-gradient(120% 90% at 20% 10%, rgb(255 255 255 / 0.14), transparent 60%),
+    radial-gradient(90% 80% at 85% 100%, rgb(0 0 0 / 0.22), transparent 60%),
+    var(--poster);
+  rotate: var(--tilt);
+  box-shadow: 0 0 0 1px rgb(20 20 20 / 0.06) inset, 0 24px 50px -22px rgb(20 30 80 / 0.5);
+  transition: rotate 0.5s var(--ease), translate 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.bp__link:hover .bp__poster,
+.bp__link:focus-visible .bp__poster { rotate: 0deg; translate: 0 -12px; box-shadow: 0 0 0 1px rgb(20 20 20 / 0.06) inset, 0 36px 70px -24px rgb(20 30 80 / 0.6); }
+
+.bp__top { display: flex; justify-content: space-between; font: 500 12px / 1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; }
+.bp__head {
+  display: block;
+  margin-top: 8%;
+  max-width: 12ch;
+  font: 400 clamp(30px, 3.9vw, 60px) / 0.95 Anton, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+}
+.bp__head .mk-strike { position: relative; display: inline-block; text-decoration: none; opacity: 0.6; }
+.bp__head .mk-strike::after { content: ''; position: absolute; left: -0.05em; right: -0.05em; top: 52%; height: 0.08em; background: currentColor; border-radius: 2px; rotate: -4deg; }
+.bp__head .mk-script {
+  display: inline-block;
+  font: 400 0.62em / 1.1 'Homemade Apple', cursive;
+  text-transform: none;
+  rotate: -5deg;
+  translate: 0 -0.1em;
+}
+
+.bp__stamp {
+  position: absolute;
+  z-index: 3;
+  left: 7%;
+  bottom: 9%;
+  display: grid;
+  place-content: center;
+  width: clamp(84px, 9vw, 116px);
+  aspect-ratio: 1;
+  border: 2px dashed currentColor;
+  border-radius: 50%;
+  font: 500 clamp(9px, 0.8vw, 11px) / 1.35 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  rotate: -14deg;
+  transition: rotate 0.5s var(--ease);
+}
+.bp__stamp b { display: block; font: 400 2.4em / 1 Anton, sans-serif; letter-spacing: 0; }
+.bp__link:hover .bp__stamp { rotate: 8deg; }
+
+.bp__shot {
+  display: block;
+  position: absolute;
+  z-index: 2;
+  right: -9%;
+  bottom: -7%;
+  width: 74%;
+  rotate: -6deg;
+  transition: rotate 0.5s var(--ease), translate 0.5s var(--ease);
+}
+.bp__shot-in { display: block; position: relative; overflow: hidden; border-radius: 3px; box-shadow: 0 0 0 4px rgb(255 255 255 / 0.9), 0 18px 30px -12px rgb(0 0 0 / 0.55); }
+.bp__shot img { display: block; width: 100%; aspect-ratio: 16 / 11; object-fit: cover; object-position: top; filter: grayscale(1) contrast(1.15) brightness(1.05); transition: filter 0.5s var(--ease); }
+.bp__shot-in::after { content: ''; position: absolute; inset: 0; background: var(--poster); mix-blend-mode: color; transition: opacity 0.5s var(--ease); }
+.bp__shot::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: -12px;
+  left: 18%;
+  width: 34%;
+  height: 26px;
+  background: rgb(243 238 228 / 0.72);
+  rotate: -4deg;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+}
+.bp__link:hover .bp__shot { rotate: -2deg; translate: -5% -5%; }
+.bp__link:hover .bp__shot-in::after { opacity: 0; }
+.bp__link:hover .bp__shot img { filter: none; }
+/* no screenshot: the idea, scribbled on a scrap of paper */
+.bp__shot--note .bp__shot-in {
+  padding: 10% 9% 16%;
+  background: #f3eee4;
+  color: #141414;
+  font: 400 clamp(18px, 2vw, 28px) / 1.2 'Gochi Hand', cursive;
+}
+.bp__shot--note .bp__shot-in::after { display: none; }
+
+/* under the poster: the hook */
+.bp__foot { display: grid; gap: 8px; margin-top: 26px; padding-left: 4px; }
+.bp__title { font: 500 12px / 1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: rgb(20 20 20 / 0.6); }
+.bp__title b { color: var(--ink); font-weight: 500; }
+.bp__hook { font: 400 clamp(21px, 2vw, 28px) / 1.2 'Gochi Hand', cursive; color: var(--ink); }
+.bp__hook em { font-style: normal; color: #2152e3; }
+.bp__more { font: 500 13px / 1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.bp__more span { background: linear-gradient(currentColor, currentColor) 0 100% / 0% 1px no-repeat; padding-bottom: 3px; transition: background-size 0.4s var(--ease); }
+.bp__link:hover .bp__more span, .bp__link:focus-visible .bp__more span { background-size: 100% 1px; }
+
+@media (max-width: 760px) {
+  .builds { margin-top: -10svh; }
+  .builds__list { grid-template-columns: 1fr; }
+  .bp:nth-child(even) { margin-top: 0; }
+  .bp__head { font-size: clamp(30px, 9vw, 46px); }
+  .bp__stamp { width: 84px; font-size: 9px; }
+}
+
+/* me.html while it's being written */
+.soon {
+  min-height: 100svh;
+  display: grid;
+  place-content: center;
+  gap: 0.6rem;
+  padding: var(--nav-h) calc(var(--rail) + 1.5rem) 3rem 1.5rem;
+  text-align: center;
+}
+.soon__head { margin: 0; font: 400 clamp(56px, 11vw, 180px) / 0.9 Anton, sans-serif; text-transform: uppercase; color: #2152e3; }
+.soon__note { margin: 0; font: 400 clamp(22px, 2.4vw, 34px) / 1.2 'Gochi Hand', cursive; color: rgb(20 20 20 / 0.7); }
+
 .sketch {
   position: relative;
   /* breathing room under the hero */
@@ -536,34 +736,104 @@ html.has-cursor * { cursor: none !important; }
   pointer-events: none;
 }
 .work__tile {
-  --size: min(25vw, 60svh);
+  --size: min(16.6vw, 44svh);
   position: absolute;
-  left: calc(3vw + var(--i, 0) * 23vw);
-  top: calc(var(--nav-h) + 4svh + var(--drop) * 1px);
+  left: calc(0.8vw + var(--i, 0) * 15.7vw);
+  top: calc(var(--nav-h) + 5svh + var(--drop) * 1px);
   width: var(--size);
   aspect-ratio: 1;
   transform: rotate(var(--tilt));
   pointer-events: auto;
 }
-.work__tile:nth-child(1) { --i: 0; }
-.work__tile:nth-child(2) { --i: 1; top: calc(var(--nav-h) + 16svh + var(--drop) * 1px); }
-.work__tile:nth-child(3) { --i: 2; }
-.work__tile:nth-child(4) { --i: 3; top: calc(var(--nav-h) + 14svh + var(--drop) * 1px); }
+.work__tile:nth-child(even) { top: calc(var(--nav-h) + 19svh + var(--drop) * 1px); }
 
-/* blank posters for now: blue paper with a soft printed grain */
+/* a poster per project: printed paper in the project's colour, a mono
+   confession in the corner and a tinted cut-out of the project itself */
 .work__poster {
+  position: relative;
+  display: block;
   width: 100%;
   height: 100%;
-  border-radius: 6px;
+  overflow: hidden;
+  border-radius: 4px;
+  color: var(--poster-ink, var(--paper));
+  text-decoration: none;
   background:
-    radial-gradient(120% 90% at 20% 10%, rgb(255 255 255 / 0.1), transparent 60%),
-    radial-gradient(90% 80% at 85% 100%, rgb(0 0 0 / 0.16), transparent 60%),
+    radial-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1.3px) 0 0 / 4px 4px,
+    radial-gradient(120% 90% at 20% 10%, rgb(255 255 255 / 0.12), transparent 60%),
+    radial-gradient(90% 80% at 85% 100%, rgb(0 0 0 / 0.2), transparent 60%),
     var(--poster, var(--blue));
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.12) inset, 0 18px 40px -18px rgb(20 30 80 / 0.45);
+  box-shadow: 0 0 0 1px rgb(20 20 20 / 0.06) inset, 0 18px 40px -18px rgb(20 30 80 / 0.45);
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
 }
-.work__tile:nth-child(2) .work__poster { --poster: #ded3b8; box-shadow: 0 0 0 1px rgb(20 20 20 / 0.08) inset, 0 18px 40px -18px rgb(20 30 80 / 0.35); }
-.work__tile:nth-child(3) .work__poster { --poster: var(--blue-deep); }
-.work__tile:nth-child(4) .work__poster { --poster: #3a66ee; }
+.work__poster:hover,
+.work__poster:focus-visible {
+  transform: translateY(-14px) rotate(calc(var(--tilt) * -0.6));
+  box-shadow: 0 30px 60px -20px rgb(20 30 80 / 0.55);
+}
+.work__tile:has(.work__poster:hover),
+.work__tile:has(.work__poster:focus-visible) { z-index: 5; }
+
+.work__cap {
+  position: absolute;
+  z-index: 2;
+  left: calc(var(--size) * 0.08);
+  top: calc(var(--size) * 0.08);
+  max-width: 15ch;
+  font: 400 max(10px, calc(var(--size) * 0.048)) / 1.4 var(--mono);
+  text-transform: lowercase;
+}
+.work__cap .mk-strike { color: inherit; }
+.work__cap .mk-strike::after { background: currentColor; height: 1px; top: 55%; rotate: 0deg; }
+
+/* the cut-out: grayscale, then tinted in the poster's colour, tilted off the edge */
+.work__art {
+  position: absolute;
+  right: -12%;
+  bottom: -8%;
+  width: 82%;
+  rotate: -7deg;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.85), 0 16px 30px -12px rgb(0 0 0 / 0.55);
+  transition: rotate 0.5s var(--ease), translate 0.5s var(--ease);
+}
+.work__art img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; filter: grayscale(1) contrast(1.15) brightness(1.05); }
+.work__art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--poster);
+  mix-blend-mode: color;
+}
+.work__poster:hover .work__art,
+.work__poster:focus-visible .work__art { rotate: -3deg; translate: -4% -4%; }
+
+/* a poster with no screenshot gets its idea set in type instead */
+.work__type {
+  position: absolute;
+  left: calc(var(--size) * 0.08);
+  right: calc(var(--size) * 0.08);
+  bottom: calc(var(--size) * 0.2);
+  font: 400 calc(var(--size) * 0.075) / 1.2 'Gochi Hand', cursive;
+  rotate: -4deg;
+  opacity: 0.9;
+}
+
+.work__name {
+  position: absolute;
+  z-index: 2;
+  left: calc(var(--size) * 0.08);
+  bottom: calc(var(--size) * 0.07);
+  display: inline-flex;
+  gap: 0.6em;
+  padding: 0.35em 0.55em;
+  font: 400 max(10px, calc(var(--size) * 0.042)) / 1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--poster-ink);
+  color: var(--poster);
+}
 
 /* phones: title, then the posters in a loose overlapping column */
 @media (max-width: 760px) {
@@ -579,8 +849,9 @@ html.has-cursor * { cursor: none !important; }
     position: relative;
     left: auto;
     top: auto;
-    width: 74vw;
-    margin-top: -14vw;
+    width: 70vw;
+    --size: 70vw;
+    margin-top: -18vw;
   }
   .work__tile:nth-child(1) { margin-top: 0; }
   .work__tile:nth-child(odd) { justify-self: start; margin-right: auto; }
@@ -870,23 +1141,11 @@ html.has-cursor * { cursor: none !important; }
 .folders__tab:focus-visible span { opacity: 1; translate: 0 -50%; }
 .folders__tab:hover { width: calc(var(--rail) - 3px); }
 .folders__tab:focus-visible { outline: 2px solid var(--blue); outline-offset: -4px; }
-/* the open tab is the page's own colour and joins straight onto it */
+/* the tab you're on keeps its colour and just sticks out a little further */
 .folders__tab.is-here {
   width: calc(var(--rail) - 1px);
-  background: var(--paper);
-  border-color: rgb(20 20 20 / 0.16);
-  color: #141414;
-  box-shadow: 2px 1px 6px -3px rgb(20 20 20 / 0.2);
-}
-.folders__tab.is-here::before {
-  /* covers the edge line where the tab meets the page */
-  content: '';
-  position: absolute;
-  left: -1px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--paper);
+  border-color: rgb(20 20 20 / 0.22);
+  box-shadow: 2px 1px 6px -3px rgb(20 20 20 / 0.25);
 }
 
 /* the colour that sweeps across the page when a tab is clicked */

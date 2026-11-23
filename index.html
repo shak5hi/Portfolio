@@ -19,10 +19,12 @@
         d.classList.add('js');
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('no-motion');
         if (/[?&]nointro\b/.test(location.search)) d.classList.add('no-intro');
+        // coming back from another tab's page: no preloader, just the page
+        try { if (sessionStorage.getItem('folders-sweep')) d.classList.add('no-intro'); } catch (e) {}
       })();
     </script>
   </head>
-  <body>
+  <body class="home">
     <!-- preloader: big words and photo flashes, then it collapses to a line -->
     <div class="loader" id="loader" aria-hidden="true">
       <div class="loader__img" id="loader-img"><img src="/me.webp" alt="" /></div>
@@ -39,11 +41,12 @@
          across and opens onto its section; "Who's this?" just jumps back up
          to the landing page (src/folders.js).
          data-also lists other sections that count as "in" that tab; a tab
-         with no section yet says "coming soon". -->
+         with no section yet says "coming soon"; a tab with data-page opens a
+         whole separate page (Me, Basically → me.html). -->
     <nav class="folders" aria-label="Sections">
-      <a class="folders__tab" href="#hero" style="--c: #c9d6de" aria-label="Who's this?"><span aria-hidden="true">Who's this?</span></a>
-      <a class="folders__tab" href="#sketch" data-also="#skills #faq #hire" style="--c: #b9ae96" aria-label="Me, Basically"><span aria-hidden="true">Me, Basically</span></a>
-      <a class="folders__tab" href="#work" style="--c: #f3eee4" aria-label="The Builds"><span aria-hidden="true">The Builds</span></a>
+      <a class="folders__tab is-here" href="#hero" data-also="#sketch #skills #faq #hire" style="--c: #ebe5d5" aria-label="Who's this?" aria-current="page"><span aria-hidden="true">Who's this?</span></a>
+      <a class="folders__tab" href="/me.html" data-page="/me.html" style="--c: #2152e3" aria-label="Me, Basically"><span aria-hidden="true">Me, Basically</span></a>
+      <a class="folders__tab" href="/builds.html" data-page="/builds.html" style="--c: #f3eee4" aria-label="The Builds"><span aria-hidden="true">The Builds</span></a>
       <a class="folders__tab" href="#flops" style="--c: #a9bccf" aria-label="Flop File"><span aria-hidden="true">Flop File</span></a>
       <a class="folders__tab" href="#side-quests" style="--c: #d9c6a6" aria-label="Side Quests"><span aria-hidden="true">Side Quests</span></a>
       <a class="folders__tab" href="#rabbithole" style="--c: #c2c9bd" aria-label="Rabbithole"><span aria-hidden="true">Rabbithole</span></a>
@@ -121,17 +124,12 @@
       </section>
 
       <!-- section 4: work. Poster cards pile up over the title as you scroll.
-           The posters are blank for now; each <li> becomes a project later
-           (put an <a href> and an <img> inside .work__poster). -->
+           The posters are written by src/work.js from src/work/projects.js;
+           each one opens its case study (project.html?p=<slug>). -->
       <section class="work" id="work" aria-labelledby="work-title">
         <div class="work__pin">
           <h2 class="work__head" id="work-title">Work I'm super<br />proud of<span class="work__dot">.</span></h2>
-          <ul class="work__pile" role="list" aria-label="Projects, coming soon">
-            <li class="work__tile" style="--tilt: -3deg; --drop: 0"><div class="work__poster" data-cursor="coming soon ✿"></div></li>
-            <li class="work__tile" style="--tilt: 1.5deg; --drop: 14"><div class="work__poster" data-cursor="coming soon ✿"></div></li>
-            <li class="work__tile" style="--tilt: -2deg; --drop: 6"><div class="work__poster" data-cursor="coming soon ✿"></div></li>
-            <li class="work__tile" style="--tilt: 4deg; --drop: 10"><div class="work__poster" data-cursor="coming soon ✿"></div></li>
-          </ul>
+          <ul class="work__pile" role="list" aria-label="Projects"></ul>
         </div>
       </section>
 

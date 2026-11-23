@@ -74,4 +74,15 @@ function saveTools() {
 
 export default defineConfig({
   plugins: [saveTools()],
+  build: {
+    rollupOptions: {
+      // every page: home (who's this?), me (me, basically), builds (the builds), and the case studies (project.html?p=<slug>)
+      input: {
+        main: path.resolve(import.meta.dirname, 'index.html'),
+        project: path.resolve(import.meta.dirname, 'project.html'),
+        me: path.resolve(import.meta.dirname, 'me.html'),
+        builds: path.resolve(import.meta.dirname, 'builds.html'),
+      },
+    },
+  },
 });

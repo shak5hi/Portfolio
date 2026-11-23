@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Work · Shakshi Sharma</title>
+    <meta name="description" content="A case study by Shakshi Sharma." />
+    <meta name="theme-color" content="#ebe5d5" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Gochi+Hand&family=Homemade+Apple&family=Geist:wght@400..600&family=Geist+Mono:wght@400..500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('no-motion');
+      })();
+    </script>
+  </head>
+  <body class="case-body">
+    <!-- everything on this page is filled in from src/work/projects.js by
+         src/case.js, using ?p=<slug> to pick the project -->
+    <!-- the dark strip across the top: nav, plus a cut-out of the project -->
+    <header class="cs-banner">
+      <div class="case-nav">
+        <a class="case-nav__logo" href="/" aria-label="Shakshi, home" id="logo"></a>
+        <a class="case-nav__back" href="/#work" data-cursor="back to the pile">
+          <span aria-hidden="true">[</span><span class="roll">all work</span><span aria-hidden="true">]</span>
+        </a>
+      </div>
+      <div class="cs-banner__art" id="banner"></div>
+    </header>
+
+    <main class="case" id="case"></main>
+
+    <!-- the stack pit: the tools fall in here when you reach the bottom -->
+    <section class="pit" id="pit" aria-labelledby="pit-title">
+      <div class="pit__top">
+        <h2 class="pit__head" id="pit-title">Built with</h2>
+        <p class="pit__hint" aria-hidden="true">(go on, run your mouse through them)</p>
+      </div>
+      <ul class="visually-hidden pit__list" role="list"></ul>
+      <div class="pit__box" aria-hidden="true">
+        <p class="pit__ghost">stack</p>
+      </div>
+      <div class="pit__base">
+        <p>handmade with <span aria-hidden="true">✿</span> code &amp; chai</p>
+        <p><a href="mailto:shaksshisharma@gmail.com" data-cursor="say hi ✉">shaksshisharma@gmail.com</a></p>
+      </div>
+    </section>
+
+    <script type="module" src="/src/case.js"></script>
+  </body>
+</html>

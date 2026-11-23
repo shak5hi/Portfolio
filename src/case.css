@@ -1,0 +1,598 @@
+/* ============ case study pages (project.html) ============ */
+/* Delivered like a story on a table: a dark strip with a cut-out of the
+   project, a confession for a headline, a tag and disciplines next to the
+   intro, then chapters with a mono label on the left and lowercase prose on
+   the right, and the artifacts laid out underneath. --case-bg / --case-ink
+   are the project's poster colours, set from src/work/projects.js. */
+
+.case-body {
+  --wrap: min(1040px, calc(100vw - 2 * var(--gutter)));
+  --wide: min(1180px, calc(100vw - 2 * var(--gutter)));
+}
+
+/* ---------- the dark strip ---------- */
+.cs-banner {
+  position: relative;
+  z-index: 2;
+  height: clamp(150px, 24vh, 230px);
+  background:
+    radial-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1.2px) 0 0 / 5px 5px,
+    linear-gradient(180deg, #1b1a19, #111);
+  color: var(--paper);
+}
+.case-nav {
+  position: relative;
+  z-index: 3;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--gutter);
+}
+.case-nav__logo { display: block; width: clamp(96px, 7.5vw, 130px); }
+.case-nav__logo svg { width: 100%; height: auto; overflow: visible; }
+.case-nav__logo path { stroke: var(--paper); stroke-width: 23; }
+.case-nav__back,
+.pit__shake {
+  display: inline-flex;
+  gap: 0.2em;
+  font: 400 12px / 1.2 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 6px 0;
+  cursor: pointer;
+}
+.case-nav__back { color: var(--paper); }
+.pit__shake { color: var(--blue); }
+.case-nav__back:hover .roll__c,
+.case-nav__back:focus-visible .roll__c,
+.pit__shake:hover .roll__c,
+.pit__shake:focus-visible .roll__c,
+.cs-links a:hover .roll__c,
+.cs-links a:focus-visible .roll__c { transform: translateY(-1.25em); }
+
+/* the cut-out: the project itself, tilted, poking out of the strip */
+.cs-banner__art { position: absolute; inset: 0; overflow: hidden; }
+.cs-banner__cut {
+  position: absolute;
+  right: 12%;
+  top: 22%;
+  width: clamp(240px, 30vw, 460px);
+  rotate: -5deg;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 24px 50px -16px rgb(0 0 0 / 0.7), 0 0 0 4px var(--paper);
+}
+.cs-banner__cut img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+.cs-banner__run {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22%;
+  overflow: hidden;
+  white-space: nowrap;
+  font: 400 clamp(14px, 1.4vw, 20px) / 1 var(--mono);
+  color: rgb(235 229 213 / 0.55);
+}
+.cs-banner__run span { display: inline-block; }
+
+/* ---------- headline + intro ---------- */
+.cs { width: var(--wrap); margin: 0 auto; padding-top: clamp(40px, 7vh, 80px); }
+.cs-count {
+  display: flex;
+  justify-content: center;
+  gap: 2em;
+  font: 400 11px / 1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(20 20 20 / 0.55);
+}
+.cs-title {
+  margin: 18px auto 0;
+  max-width: 17ch;
+  font: 400 clamp(40px, 4.6vw, 76px) / 0.98 var(--big);
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.mk-strike {
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+  color: var(--blue);
+}
+.mk-strike::after {
+  content: '';
+  position: absolute;
+  left: -0.04em;
+  right: -0.04em;
+  top: 52%;
+  height: 0.09em;
+  background: var(--blue);
+  rotate: -2deg;
+  border-radius: 2px;
+  transform-origin: left center;
+}
+/* on the case page the line draws itself through the word */
+html:not(.no-motion) .cs-title .mk-strike::after { transform: scaleX(0); transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1) 0.85s; }
+html:not(.no-motion) .cs-title.is-in .mk-strike::after { transform: scaleX(1); }
+.mk-script {
+  display: inline-block;
+  font-family: 'Gochi Hand', cursive;
+  text-transform: none;
+  color: var(--blue);
+  font-size: 1.18em;
+  line-height: 0.8;
+  rotate: -3deg;
+  padding: 0 0.06em;
+}
+
+.cs-row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.32fr) minmax(0, 0.68fr);
+  column-gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+}
+.cs-row--intro { margin-top: clamp(40px, 7vh, 80px); }
+.cs-side { position: sticky; top: 24px; }
+.cs-tag { font: 500 clamp(22px, 1.9vw, 30px) / 1.1 var(--text); letter-spacing: -0.02em; }
+.cs-tags,
+.cs-links { list-style: none; margin: 14px 0 0; padding: 0; }
+.cs-tags li {
+  font: 400 11px / 1.75 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgb(20 20 20 / 0.7);
+}
+.cs-facts { margin: 26px 0 0; display: grid; gap: 14px; }
+.cs-facts dt {
+  font: 400 10px / 1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+.cs-facts dd { margin: 0; font: 400 13px / 1.5 var(--text); color: rgb(20 20 20 / 0.82); }
+.cs-links { margin-top: 22px; display: grid; gap: 4px; }
+.cs-links a {
+  display: inline-flex;
+  font: 400 12px / 1.4 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--blue);
+  text-decoration: none;
+}
+
+/* the words: lowercase, conversational, a comfortable measure */
+.cs-text { max-width: 600px; }
+.cs-text p {
+  margin: 0 0 1.15em;
+  font: 400 clamp(15px, 1.08vw, 17px) / 1.62 var(--text);
+  color: rgb(20 20 20 / 0.88);
+}
+.cs-text--intro p:first-child {
+  font: 500 clamp(19px, 1.6vw, 24px) / 1.35 var(--text);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.cs-text strong { font-weight: 600; color: var(--ink); }
+.cs-text em { font-style: italic; }
+
+/* ---------- chapters ---------- */
+.cs-chapter { margin-top: clamp(56px, 10vh, 120px); }
+.cs-label {
+  margin: 0.35em 0 0;
+  font: 400 11px / 1.4 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+}
+.cs-label::before { content: '— '; color: var(--blue); }
+
+.cs-fails { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; }
+.cs-fails h3 {
+  margin: 0 0 8px;
+  font: 400 clamp(22px, 1.8vw, 28px) / 1.05 var(--big);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.cs-fails__n {
+  display: block;
+  margin-bottom: 8px;
+  font: 400 10px / 1 var(--mono);
+  letter-spacing: 0.12em;
+  color: var(--blue);
+}
+.cs-fails h3::after { content: ' ✗'; font-family: 'Gochi Hand', cursive; color: var(--blue); }
+.cs-fails p { margin: 0; }
+
+/* artifacts: laid out under their chapter, wider than the words */
+.cs-art { width: var(--wide); margin: clamp(28px, 5vh, 56px) 0 0 calc((var(--wrap) - var(--wide)) / 2); }
+.cs-gallery { display: grid; gap: clamp(14px, 1.6vw, 24px); align-items: start; }
+.cs-gallery--2 { grid-template-columns: 1fr 1fr; }
+.cs-gallery--3 { grid-template-columns: 1.3fr 1fr; }
+.cs-gallery--3 .shot:first-child { grid-row: span 2; }
+.shot { margin: 0; }
+.shot__frame {
+  border-radius: 4px;
+  overflow: hidden;
+  background: #e4ddcb;
+  box-shadow: 0 0 0 1px rgb(20 20 20 / 0.12), 0 24px 48px -30px rgb(20 30 80 / 0.5);
+}
+.shot img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+.shot figcaption,
+.diagram figcaption {
+  margin-top: 10px;
+  font: 400 11px / 1.5 var(--mono);
+  color: rgb(20 20 20 / 0.6);
+}
+
+/* ---------- the diagram ---------- */
+.case-diagram { width: var(--wide) !important; margin: clamp(24px, 6vh, 72px) 0; }
+.diagram {
+  margin: 0;
+  padding: clamp(16px, 2.4vw, 36px);
+  border-radius: 10px;
+  background:
+    linear-gradient(rgb(33 82 227 / 0.07) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgb(33 82 227 / 0.07) 1px, transparent 1px) 0 0 / 28px 28px,
+    #f3eee2;
+  box-shadow: 0 0 0 1px rgb(20 20 20 / 0.08) inset;
+}
+.diagram__scroll { overflow-x: auto; overscroll-behavior-x: contain; }
+.diagram__svg { width: 100%; min-width: 760px; height: auto; overflow: visible; }
+.diagram__fig { color: var(--blue); }
+
+.node__fill { fill: #f8f5ee; }
+.node--hot .node__fill { fill: var(--blue); }
+.node--ext .node__fill { fill: transparent; }
+.node--db .node__fill { fill: #e8e1d0; }
+.node__line { fill: none; stroke: var(--blue); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.node__line--ghost { stroke-width: 1.2; opacity: 0.45; }
+.node--hot .node__line { stroke: var(--blue-deep); }
+.node--ext .node__line { stroke-dasharray: 7 6; }
+.node__label {
+  font: 400 23px var(--big);
+  text-transform: uppercase;
+  text-anchor: middle;
+  fill: var(--ink);
+  letter-spacing: 0.01em;
+}
+.node__sub { font: 400 13px var(--mono); text-anchor: middle; fill: rgb(20 20 20 / 0.62); }
+.node__label--hot { fill: var(--paper); }
+.node__sub--hot { fill: rgb(235 229 213 / 0.82); }
+
+.edge { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; opacity: 0.75; }
+.edge--dash { stroke-dasharray: 2 7; stroke-width: 2.2; }
+.edge__head { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; opacity: 0.8; }
+.edge__label {
+  font: 400 19px 'Gochi Hand', cursive;
+  fill: var(--blue);
+  paint-order: stroke;
+  stroke: #f3eee2;
+  stroke-width: 6px;
+  stroke-linejoin: round;
+}
+.dot { fill: var(--blue); stroke: #f3eee2; stroke-width: 2.5; }
+.diagram__note { font: 400 21px 'Gochi Hand', cursive; fill: var(--blue-deep); opacity: 0.85; }
+
+/* ---------- next project ---------- */
+.case-next {
+  display: block;
+  margin: clamp(40px, 8vh, 100px) var(--gutter) 0;
+  padding: clamp(28px, 5vh, 56px) clamp(20px, 3vw, 48px);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--fg);
+  text-decoration: none;
+  transition: transform 0.5s var(--ease);
+}
+.case-next:hover { transform: rotate(-0.6deg) translateY(-4px); }
+.case-next__label { display: block; font: 400 12px / 1 var(--mono); text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.75; }
+.case-next__name { display: block; margin-top: 14px; font: 400 clamp(56px, 10vw, 180px) / 0.86 var(--big); text-transform: uppercase; }
+.case-next__line { display: block; margin-top: 18px; font: 400 13px / 1.4 var(--mono); opacity: 0.85; }
+.case-next .mk-strike,
+.case-next .mk-script { color: inherit; }
+.case-next .mk-strike::after { background: currentColor; }
+
+/* ---------- the stack pit ---------- */
+.pit {
+  position: relative;
+  margin-top: clamp(60px, 10vh, 120px);
+  border-top: 1px solid rgb(20 20 20 / 0.1);
+}
+.pit__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 28px var(--gutter) 0;
+  position: relative;
+  z-index: 3;
+}
+.pit__head {
+  margin: 0;
+  font: 400 clamp(36px, 4vw, 64px) / 1 var(--big);
+  text-transform: uppercase;
+  color: var(--blue);
+}
+.pit__box {
+  --d: 96px;
+  position: relative;
+  height: clamp(380px, 64svh, 660px);
+  overflow-x: clip;
+  touch-action: pan-y;
+}
+.pit__ghost {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+  font: 400 clamp(140px, 26vw, 480px) / 0.74 var(--big);
+  text-transform: uppercase;
+  color: rgb(33 82 227 / 0.07);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+.chip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--d);
+  height: var(--d);
+  border-radius: 50%;
+  background: #f8f5ee;
+  box-shadow: 0 0 0 1.5px rgb(20 20 20 / 0.12) inset, 0 10px 18px -10px rgb(20 30 80 / 0.5);
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: calc(var(--d) * 0.06);
+  visibility: hidden;
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+  will-change: transform;
+  overflow: hidden;
+}
+.chip.is-live { visibility: visible; }
+/* the shapes (the physics bodies in pit.js match these) */
+.chip--tile { border-radius: 16%; }
+.chip--pill { border-radius: 999px; grid-auto-flow: column; align-items: center; gap: calc(var(--d) * 0.08); }
+.chip--ticket { border-radius: 6px; grid-auto-flow: column; align-items: center; gap: calc(var(--d) * 0.08); }
+.chip--ticket::before,
+.chip--ticket::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--paper);
+}
+.chip--ticket::before { left: -6px; }
+.chip--ticket::after { right: -6px; }
+.chip--nut {
+  border-radius: 0;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+.chip--pill .chip__name,
+.chip--ticket .chip__name { max-width: none; font-size: max(10px, calc(var(--d) * 0.13)); }
+.pit__hint { margin: 0; font: 400 clamp(17px, 1.6vw, 22px) / 1.2 'Gochi Hand', cursive; color: rgb(20 20 20 / 0.6); rotate: -2deg; }
+.chip.is-held { cursor: grabbing; box-shadow: 0 0 0 2px var(--blue) inset, 0 18px 30px -12px rgb(20 30 80 / 0.55); }
+.chip--dark { background: var(--ink); }
+.chip--dark .chip__name { color: rgb(235 229 213 / 0.8); }
+.chip__icon { width: calc(var(--d) * 0.38); height: calc(var(--d) * 0.38); }
+.chip__mono { font: 400 calc(var(--d) * 0.3) / 1 var(--big); text-transform: uppercase; }
+.chip__name {
+  font: 400 max(9px, calc(var(--d) * 0.1)) / 1 var(--mono);
+  color: rgb(20 20 20 / 0.7);
+  white-space: nowrap;
+  max-width: calc(var(--d) * 0.84);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pit__base {
+  position: relative;
+  z-index: 2;
+  background: var(--paper);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px var(--gutter);
+  border-top: 1px solid rgb(20 20 20 / 0.1);
+  font: 400 12px / 1.5 var(--mono);
+}
+.pit__base a { color: var(--blue); text-decoration: none; }
+
+/* reduced motion: no falling, the chips just sit in a row on the floor */
+.pit.is-static .pit__box { display: flex; flex-wrap: wrap; align-content: flex-end; justify-content: center; gap: 12px; padding: 24px var(--gutter); height: auto; min-height: 240px; }
+.pit.is-static .chip { position: relative; visibility: visible; }
+
+/* ---------- handmade: graph paper, tape, ink and marker ---------- */
+
+/* the whole page sits on the same graph paper as the diagrams */
+.case-body {
+  background:
+    linear-gradient(rgb(33 82 227 / 0.075) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgb(33 82 227 / 0.075) 1px, transparent 1px) 0 0 / 28px 28px,
+    var(--paper);
+}
+.pit__base { background: transparent; }
+
+/* highlighter: a soft blue marker stroke, slightly uneven */
+.mk-hl {
+  color: inherit;
+  padding: 0.04em 0.18em;
+  margin: 0 -0.08em;
+  border-radius: 0.3em 0.15em 0.35em 0.2em;
+  background: linear-gradient(100deg, rgb(33 82 227 / 0) 0.2em, rgb(33 82 227 / 0.17) 0.5em, rgb(33 82 227 / 0.14) 92%, rgb(33 82 227 / 0) 100%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* chapter labels get a pen squiggle underneath */
+.cs-label span {
+  padding-bottom: 7px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'%3E%3Cpath d='M1 5 C 15 1, 25 8, 40 4 S 65 1, 80 5 S 105 7, 119 3' fill='none' stroke='%232152e3' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") left bottom / 100% 7px no-repeat;
+}
+.cs-label::before { content: none; }
+
+/* the tag in the intro, written on a scrap of paper */
+.cs-tag { display: inline-block; padding: 0.2em 0.4em; margin-left: -0.4em; background: rgb(255 255 255 / 0.55); rotate: -1.5deg; box-shadow: 0 1px 0 rgb(20 20 20 / 0.06); }
+
+/* screenshots: taped down, each at its own little angle */
+.shot { position: relative; }
+.shot__frame { box-shadow: 0 0 0 5px #fbf8f1, 0 0 0 6px rgb(20 20 20 / 0.08), 0 22px 40px -22px rgb(20 30 80 / 0.55); border-radius: 2px; }
+.cs-gallery .shot:nth-child(odd) { rotate: -1.2deg; }
+.cs-gallery .shot:nth-child(even) { rotate: 1.4deg; }
+.shot::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: -14px;
+  left: calc(50% - 46px);
+  width: 92px;
+  height: 26px;
+  background: rgb(214 225 247 / 0.78);
+  box-shadow: 0 1px 2px rgb(20 20 20 / 0.12);
+  rotate: -4deg;
+  clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 2% 96%, 0 50%);
+}
+.cs-gallery .shot:nth-child(even)::before { rotate: 5deg; left: calc(50% - 30px); }
+.shot figcaption {
+  margin-top: 16px;
+  font: 400 clamp(17px, 1.3vw, 21px) / 1.15 'Gochi Hand', cursive;
+  color: var(--blue);
+  rotate: -1deg;
+}
+.shot figcaption::before { content: '↑ '; }
+.cs-gallery { gap: clamp(28px, 3vw, 48px); padding-top: 14px; }
+
+/* the diagram: smaller, pinned up like a sheet from a notebook */
+.cs-art--diagram { width: min(820px, var(--wrap)); margin-left: auto; margin-right: auto; }
+.diagram {
+  position: relative;
+  padding: clamp(14px, 2vw, 26px);
+  background: #faf7ef;
+  rotate: -0.6deg;
+  box-shadow: 0 0 0 1px rgb(20 20 20 / 0.08), 0 26px 44px -26px rgb(20 30 80 / 0.5);
+  border-radius: 2px;
+}
+.diagram::before,
+.diagram::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: -12px;
+  width: 84px;
+  height: 24px;
+  background: rgb(214 225 247 / 0.8);
+  box-shadow: 0 1px 2px rgb(20 20 20 / 0.12);
+  clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 2% 96%, 0 50%);
+}
+.diagram::before { left: 18px; rotate: -8deg; }
+.diagram::after { right: 18px; rotate: 7deg; }
+.diagram__svg { min-width: 640px; }
+.diagram figcaption { font: 400 18px / 1.2 'Gochi Hand', cursive; color: var(--blue); }
+.diagram__fig { font-family: var(--mono); font-size: 11px; }
+
+/* "for the curious": the technical names, like a pencilled margin note */
+.cs-nerd {
+  margin: 1.4em 0 0 !important;
+  padding: 10px 14px;
+  border: 1.5px dashed rgb(33 82 227 / 0.4);
+  border-radius: 10px 4px 12px 6px;
+  font: 400 12px / 1.65 var(--mono) !important;
+  color: rgb(20 20 20 / 0.72) !important;
+  background: rgb(255 255 255 / 0.4);
+}
+.cs-nerd span {
+  display: inline-block;
+  margin-right: 0.8em;
+  padding: 1px 7px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--paper);
+  background: var(--blue);
+  rotate: -2deg;
+}
+
+/* a handwritten aside, with an arrow pointing back at the story */
+.cs-note {
+  grid-column: 2;
+  justify-self: end;
+  position: relative;
+  max-width: 30ch;
+  margin: 6px 4% 0 0;
+  padding-left: 54px;
+  font: 400 clamp(18px, 1.4vw, 22px) / 1.2 'Gochi Hand', cursive;
+  color: var(--blue);
+  rotate: -2deg;
+}
+.cs-note__arrow {
+  position: absolute;
+  left: 0;
+  top: -12px;
+  width: 46px;
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* the fails: sticky notes, taped on at an angle */
+.cs-fails { gap: 30px; margin-top: 6px; }
+.cs-fail {
+  position: relative;
+  padding: 22px 22px 20px;
+  background: #fbf8f1;
+  box-shadow: 0 0 0 1px rgb(20 20 20 / 0.06), 0 18px 30px -20px rgb(20 30 80 / 0.5);
+  rotate: -0.8deg;
+}
+.cs-fail:nth-child(2) { rotate: 0.9deg; margin-left: 18px; }
+.cs-fail:nth-child(3) { rotate: -0.4deg; }
+.cs-fail::before {
+  content: '';
+  position: absolute;
+  top: -11px;
+  left: 24px;
+  width: 70px;
+  height: 22px;
+  background: rgb(214 225 247 / 0.8);
+  rotate: -5deg;
+  clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 2% 96%, 0 50%);
+}
+.cs-fail h3::after { content: none; }
+.cs-fail::after {
+  content: '✗';
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  font: 400 34px / 1 'Gochi Hand', cursive;
+  color: var(--blue);
+  rotate: 10deg;
+}
+.cs-fail h3 { padding-right: 30px; }
+
+/* ---------- phones ---------- */
+@media (max-width: 800px) {
+  .diagram figcaption::after { content: '  ·  swipe to see it all →'; color: var(--blue); }
+  .cs-row { grid-template-columns: 1fr; row-gap: 16px; }
+  .cs-note { grid-column: 1; margin-right: 0; }
+  .cs-fail:nth-child(2) { margin-left: 0; }
+  .cs-side { position: static; }
+  .cs-gallery--2,
+  .cs-gallery--3 { grid-template-columns: 1fr; }
+  .cs-gallery--3 .shot:first-child { grid-row: auto; }
+  .cs-banner__cut { right: -10%; top: 46%; width: 60vw; }
+}
+@media (max-width: 600px) {
+  .pit__base { flex-direction: column; }
+}

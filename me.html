@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Me, Basically · Shakshi Sharma</title>
+    <meta name="description" content="Me, basically." />
+    <meta name="theme-color" content="#ebe5d5" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Gochi+Hand&family=Homemade+Apple&family=Geist:wght@400..800&family=Geist+Mono:wght@400..500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('no-motion');
+      })();
+    </script>
+  </head>
+  <body class="page-inner page-me">
+    <!-- "Me, Basically": its own page, opened by the second folder tab.
+         It isn't part of the landing page. -->
+    <div class="page" id="page">
+    <span id="top"></span>
+    <header class="nav nav--inner">
+      <a class="nav__logo" href="/" aria-label="Shakshi, home" id="logo"></a>
+    </header>
+
+    <!-- the same folder tabs as the landing page; this one is open -->
+    <nav class="folders" aria-label="Sections">
+      <a class="folders__tab" href="/" data-page="/" style="--c: #ebe5d5" aria-label="Who's this?"><span aria-hidden="true">Who's this?</span></a>
+      <a class="folders__tab is-here" href="/me.html" data-page="/me.html" style="--c: #2152e3" aria-label="Me, Basically" aria-current="page"><span aria-hidden="true">Me, Basically</span></a>
+      <a class="folders__tab" href="/builds.html" data-page="/builds.html" style="--c: #f3eee4" aria-label="The Builds"><span aria-hidden="true">The Builds</span></a>
+      <a class="folders__tab" href="#flops" style="--c: #a9bccf" aria-label="Flop File"><span aria-hidden="true">Flop File</span></a>
+      <a class="folders__tab" href="#side-quests" style="--c: #d9c6a6" aria-label="Side Quests"><span aria-hidden="true">Side Quests</span></a>
+      <a class="folders__tab" href="#rabbithole" style="--c: #c2c9bd" aria-label="Rabbithole"><span aria-hidden="true">Rabbithole</span></a>
+    </nav>
+
+    <main>
+      <!-- this page is still being written -->
+      <section class="soon" aria-labelledby="soon-title">
+        <h1 class="soon__head" id="soon-title">Me, basically.</h1>
+        <p class="soon__note">still being written. come back soon.</p>
+      </section>
+    </main>
+
+    <!-- footer: the paper plane flies off when this arrives (data-plane-stop) -->
+    <footer class="footer" id="footer" data-plane-stop>
+      <div class="footer__top">
+        <div class="footer__hello">
+          <a class="footer__logo" href="#top" aria-label="Shakshi, back to the top"></a>
+          <p class="footer__line">i'm even better in conversation.<br />say hi at <a href="mailto:shaksshisharma@gmail.com" data-cursor="say hi ✉">shaksshisharma@gmail.com</a></p>
+          <ul class="footer__social" role="list">
+            <li><a href="https://github.com/shak5hi" target="_blank" rel="noopener"><span class="roll">github</span></a></li>
+            <li><a href="mailto:shaksshisharma@gmail.com"><span class="roll">mail</span></a></li>
+          </ul>
+        </div>
+
+        <nav class="footer__nav" aria-label="Footer">
+          <a class="footer__top-link" href="#top" data-cursor="whee ↑"><span aria-hidden="true">[</span><span class="roll">back to top</span><span aria-hidden="true">]</span></a>
+          <ol role="list">
+            <li><a href="/#sketch"><span class="roll">a note</span></a><span class="footer__n">01</span></li>
+            <li><a href="/#skills"><span class="roll">what i do</span></a><span class="footer__n">02</span></li>
+            <li><a href="/#work"><span class="roll">work</span></a><span class="footer__n">03</span></li>
+            <li><a href="/#faq"><span class="roll">before you ask</span></a><span class="footer__n">04</span></li>
+            <li><a href="/#hire"><span class="roll">hire me</span></a><span class="footer__n">05</span></li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="footer__base">
+        <p>handmade with <span class="footer__flower" aria-hidden="true">✿</span> code, <span aria-hidden="true">☕</span> chai &amp; too many open tabs</p>
+        <p>© <span id="year">2026</span> shakshi sharma. all rights reserved.</p>
+      </div>
+
+      <p class="footer__big" aria-hidden="true">stay curious</p>
+    </footer>
+    </div>
+
+    <script type="module" src="/src/me.js"></script>
+  </body>
+</html>

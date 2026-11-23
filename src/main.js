@@ -536,6 +536,16 @@ if (skipIntro) {
   });
 }
 
+// arriving with a #section in the address (e.g. from the Me, Basically page's
+// tabs): go there once the pinned sections have measured themselves
+if (location.hash.length > 1) {
+  fontsReady.then(() => {
+    ScrollTrigger.refresh();
+    const el = document.querySelector(location.hash);
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY, behavior: 'instant' });
+  });
+}
+
 // dev only: ?slow=0.25 plays everything at quarter speed
 if (import.meta.env.DEV) {
   const m = location.search.match(/slow=([\d.]+)/);

@@ -4,14 +4,47 @@
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { PROJECTS, marks } from './work/projects.js';
 
 gsap.registerPlugin(ScrollTrigger);
+
+// each poster's resting tilt and how far down it sits (px), in pile order
+const LAY = [
+  [-3, 0],
+  [2, 26],
+  [-1.5, 8],
+  [3.5, 30],
+  [-2.5, 4],
+  [1.5, 22],
+];
+
+// one poster per project: a little confession in mono in the corner, a
+// tinted cut-out of the project itself, and its name at the foot. The whole
+// card opens the case study.
+function writePosters(pile) {
+  pile.innerHTML = PROJECTS.map((p, i) => {
+    const [tilt, drop] = LAY[i % LAY.length];
+    const n = String(i + 1).padStart(2, '0');
+    const art = p.poster.art
+      ? `<span class="work__art" aria-hidden="true"><img src="${p.poster.art}" alt="" loading="lazy" decoding="async" /></span>`
+      : `<span class="work__type" aria-hidden="true">${(p.poster.type || p.name).replace(/\n/g, '<br />')}</span>`;
+    return `
+      <li class="work__tile" style="--tilt: ${tilt}deg; --drop: ${drop}; --i: ${i}">
+        <a class="work__poster" href="/project.html?p=${p.slug}" style="--poster: ${p.poster.bg}; --poster-ink: ${p.poster.ink}" data-cursor="read the story →" aria-label="${p.name}: ${p.caption.replace(/~~.+?~~\s?/g, '')}">
+          <span class="work__cap" aria-hidden="true">${marks(p.caption)}</span>
+          ${art}
+          <span class="work__name" aria-hidden="true"><span>${n}</span>${p.name}</span>
+        </a>
+      </li>`;
+  }).join('');
+}
 
 export function initWork({ reduce = false } = {}) {
   const section = document.getElementById('work');
   if (!section) return;
   const pin = section.querySelector('.work__pin');
   const head = section.querySelector('.work__head');
+  writePosters(section.querySelector('.work__pile'));
   const tiles = [...section.querySelectorAll('.work__tile')];
   if (reduce) return;
 
